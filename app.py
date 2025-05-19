@@ -156,16 +156,15 @@ if st.button("클러스터링 수행"):
         cluster_labels = sorted(df['cluster'].unique())
         cluster_choice = st.slider("대표 샘플을 볼 클러스터 번호를 선택하세요", min_value=min(cluster_labels), max_value=max(cluster_labels), step=1)
 
-        if st.button("대표 샘플 보기"):
-            # 클러스터 중심과 가장 가까운 샘플 구하기
-            centers = kmeans.cluster_centers_
-            indices, distances = pairwise_distances_argmin_min(centers, df_scaled)
+        # 클러스터 중심과 가장 가까운 샘플 구하기
+        centers = kmeans.cluster_centers_
+        indices, distances = pairwise_distances_argmin_min(centers, df_scaled)
 
-            rep_index = indices[cluster_choice]  # 선택된 클러스터의 대표 인덱스
-            rep_row = df.iloc[rep_index]
+        rep_index = indices[cluster_choice]  # 선택된 클러스터의 대표 인덱스
+        rep_row = df.iloc[rep_index]
 
-            st.markdown(f"**클러스터 {cluster_choice}의 대표 시간대: {rep_row.name}**")
-            st.dataframe(rep_row.to_frame(name='Value'))
+        st.markdown(f"**클러스터 {cluster_choice}의 대표 시간대: {rep_row.name}**")
+        st.dataframe(rep_row.to_frame(name='Value'))
     else:
         st.warning("먼저 클러스터링을 수행해주세요.")
 
