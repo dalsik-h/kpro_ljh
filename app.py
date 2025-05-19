@@ -10,16 +10,17 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 import matplotlib.font_manager as fm
 
+# 페이지 설정
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("KMeans 기반 시계열 군집 분석")
 
-# 한글 폰트 설정 (NanumGothic 설치된 경우 우선 사용)
-font_path = './NanumGothic-Regular.ttf'
+# 한글 폰트 설정
+font_path = './NanumGothic-Regular.ttf'  # 파일을 프로젝트 폴더에 포함시켜야 함
 font_prop = fm.FontProperties(fname=font_path)
 plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
-# 데이터 로딩 및 전처리 캐싱
+# 데이터 로딩 및 전처리
 @st.cache_data
 def load_and_process():
     df = pd.read_csv('./pip_dataset_pro.csv', index_col='date_time', parse_dates=True)
@@ -33,28 +34,27 @@ df, df_scaled = load_and_process()
 st.success("데이터 불러오기 성공")
 st.write(df.head())
 
-# Elbow Method: 버튼 클릭 시 실행
+# Elbow Method
 st.subheader("2. 최적 군집 수 찾기 (Elbow Method)")
 if st.button("Elbow Method 실행"):
     inertia = []
-    K_range = range(1, 11)
-    for k in K_range:
+    for k in range(1, 11):
         kmeans = KMeans(n_clusters=k, random_state=42)
         kmeans.fit(df_scaled)
         inertia.append(kmeans.inertia_)
 
     fig1 = plt.figure(figsize=(5, 3))
-    plt.plot(K_range, inertia, marker='o')
-    plt.xlabel('k (Number of Clusters)')
-    plt.ylabel('Inertia')
-    plt.title('Elbow Method')
+    plt.plot(range(1, 11), inertia, marker='o')
+    plt.xlabel("k (Number of Clusters)")
+    plt.ylabel("Inertia")
+    plt.title("Elbow Method")
     plt.grid()
     st.pyplot(fig1)
 
-# 클러스터 평가 함수
+# 클러스터 품질 평가
 @st.cache_data
 def evaluate_k(X, k):
-    model = KMeans(n_clusters=k, random_state=42, n_init=10)
+    model = KMeans(n_clusters=k, random_state=42)
     labels = model.fit_predict(X)
     return {
         "silhouette": silhouette_score(X, labels),
@@ -84,7 +84,6 @@ if st.button("클러스터링 수행"):
     st.subheader("5. 클러스터별 평균값")
     st.dataframe(df.groupby('cluster').mean().round(2))
 
-    # 시각화 탭 구분
     st.subheader("6. 클러스터 시각화")
     tab1, tab2 = st.tabs(["PCA", "t-SNE"])
 
@@ -93,61 +92,55 @@ if st.button("클러스터링 수행"):
         df_pca = pca.fit_transform(df_scaled)
         fig2 = plt.figure(figsize=(5, 3))
         plt.scatter(df_pca[:, 0], df_pca[:, 1], c=clusters, cmap='tab10', alpha=0.7)
-        plt.xlabel('PCA 1')
-        plt.ylabel('PCA 2')
-        plt.title('PCA Method')
-        plt.colorbar(label='Cluster')
+        plt.xlabel("PCA 1")
+        plt.ylabel("PCA 2")
+        plt.title("PCA Method")
+        plt.colorbar(label="Cluster")
         plt.grid()
         st.pyplot(fig2)
 
     with tab2:
-        if "clustered" in st.session_state and st.session_state["clustered"]:
-            df = st.session_state["df"]
-            df_scaled = st.session_state["df_scaled"]
+        if st.button("t-SNE 시각화 실행"):
+            st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
 
-            if st.button("t-SNE 시각화 실행"):
-                st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
+            df_sample = df_scaled.copy()
+            if len(df_scaled) > 1000:
+                df_sample = df_scaled.sample(n=1000, random_state=42)
+                cluster_sample = df['cluster'].iloc[df_sample.index]
+            else:
+                cluster_sample = df['cluster']
 
-                df_sample = df_scaled.copy()
-                if len(df_scaled) > 1000:
-                    df_sample = df_scaled.sample(n=1000, random_state=42)
-                    cluster_sample = df['cluster'].iloc[df_sample.index]
-                else:
-                    cluster_sample = df['cluster']
+            with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
+                tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+                tsne_result = tsne.fit_transform(df_sample)
 
-                with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
-                    tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
-                    tsne_result = tsne.fit_transform(df_sample)
+            fig3 = plt.figure(figsize=(5, 3))
+            plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
+            plt.title("t-SNE 기반 클러스터 시각화")
+            plt.xlabel("t-SNE 1")
+            plt.ylabel("t-SNE 2")
+            plt.colorbar(label="Cluster")
+            plt.grid()
+            st.pyplot(fig3)
 
-                fig3 = plt.figure(figsize=(5, 3))
-                plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
-                plt.title("t-SNE 기반 클러스터 시각화")
-                plt.xlabel("t-SNE 1")
-                plt.ylabel("t-SNE 2")
-                plt.colorbar(label="Cluster")
-                plt.grid()
-                st.pyplot(fig3)
+        # ✅ 항상 보이게: 클러스터 0 통계 요약
+        st.subheader("7. 클러스터 0 통계 요약")
+        cluster_0 = df[df['cluster'] == 0]
+        total_len = len(df)
+        cluster_0_len = len(cluster_0)
+        percentage = cluster_0_len / total_len * 100
 
-                # 클러스터 0 통계 요약 다시 표시
-                st.subheader("7. 클러스터 0 통계 요약")
-                cluster_0 = df[df['cluster'] == 0]
-                total_len = len(df)
-                cluster_0_len = len(cluster_0)
-                percentage = cluster_0_len / total_len * 100
+        st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
 
-                st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+        numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
+        summary = pd.DataFrame({
+            'Mean': cluster_0[numeric_cols].mean(),
+            'Mode': cluster_0[numeric_cols].mode().iloc[0],
+            'Min': cluster_0[numeric_cols].min(),
+            'Max': cluster_0[numeric_cols].max(),
+            'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
+            'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
+            'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
+        })
 
-                numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
-                summary = pd.DataFrame({
-                    'Mean': cluster_0[numeric_cols].mean(),
-                    'Mode': cluster_0[numeric_cols].mode().iloc[0],
-                    'Min': cluster_0[numeric_cols].min(),
-                    'Max': cluster_0[numeric_cols].max(),
-                    'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
-                    'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
-                    'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
-                })
-
-                st.dataframe(summary.round(2))
-        else:
-            st.warning("먼저 클러스터링을 수행해 주세요.")
+        st.dataframe(summary.round(2))
