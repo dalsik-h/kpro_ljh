@@ -148,7 +148,7 @@ if st.button("클러스터링 수행"):
 
     
 
-    st.subheader("8. 유량(1) 위치에 ngt_flow_5 통계값 표시")
+    st.subheader("8. 관망도 상 클러스터 '0' 통계값 표시")
     image = Image.open("./back_img2.jpg")  # 업로드한 배경 이미지
 
     # ngt_flow_5 컬럼 요약
@@ -160,14 +160,14 @@ if st.button("클러스터링 수행"):
     ax.axis('off')
 
     # 오버레이 텍스트 출력 (위치: 유량(1) 기준 수동 지정)
-    base_x, base_y = 110, 270
-    line_height = 20
+    base_x, base_y = 210, 350
+    line_height = 30
     for i, (label, value) in enumerate(stats.items()):
         ax.text(
             base_x,
             base_y + i * line_height,
             f"{label}: {value}",
-            fontsize=11,
+            fontsize=8,
             color='black',
             bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray')
         )
