@@ -165,7 +165,7 @@ if st.button("클러스터링 수행"):
     line_height = 40
 
     max_width = 140   # 박스 고정 너비
-    box_height = 22   # 한 줄 높이
+    box_height = 40   # 한 줄 높이
 
     for i, (label, value) in enumerate(stats.items()):
         y = base_y + i * line_height
@@ -179,7 +179,7 @@ if st.button("클러스터링 수행"):
             linewidth=1,
             edgecolor='gray',
             facecolor='white',
-            alpha=0.8
+            alpha=0.2
         ))
 
         # 2. 그 위에 텍스트 쓰기
