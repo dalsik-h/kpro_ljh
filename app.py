@@ -102,39 +102,46 @@ if st.button("클러스터링 수행"):
 
     with tab2:
         if st.button("t-SNE 시각화 실행"):
-            tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+            st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
+
+            df_sample = df_scaled.copy()
+            if len(df_scaled) > 1000:
+                df_sample = df_scaled.sample(n=1000, random_state=42)
+                cluster_sample = df['cluster'].iloc[df_sample.index]
+            else:
+                cluster_sample = df['cluster']
+
             with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
-                tsne_result = tsne.fit_transform(df_scaled)
-                df['tsne_1'] = tsne_result[:, 0]
-                df['tsne_2'] = tsne_result[:, 1]
+                tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+                tsne_result = tsne.fit_transform(df_sample)
 
-                fig3 = plt.figure(figsize=(5, 3))
-                plt.scatter(df['tsne_1'], df['tsne_2'], c=df['cluster'], cmap='tab10', s=10, alpha=0.7)
-                plt.title("t-SNE Method")
-                plt.xlabel("t-SNE 1")
-                plt.ylabel("t-SNE 2")
-                plt.colorbar(label="Cluster")
-                plt.grid()
-                st.pyplot(fig3)
+            fig3 = plt.figure(figsize=(5, 3))
+            plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
+            plt.title("t-SNE 기반 클러스터 시각화")
+            plt.xlabel("t-SNE 1")
+            plt.ylabel("t-SNE 2")
+            plt.colorbar(label="Cluster")
+            plt.grid()
+            st.pyplot(fig3)
 
-    # 클러스터 0 통계 요약
-    st.subheader("7. 클러스터 0 통계 요약")
-    cluster_0 = df[df['cluster'] == 0]
-    total_len = len(df)
-    cluster_0_len = len(cluster_0)
-    percentage = cluster_0_len / total_len * 100
+            # 클러스터 0 통계 요약 다시 표시
+            st.subheader("7. 클러스터 0 통계 요약")
+            cluster_0 = df[df['cluster'] == 0]
+            total_len = len(df)
+            cluster_0_len = len(cluster_0)
+            percentage = cluster_0_len / total_len * 100
 
-    st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+            st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
 
-    numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
-    summary = pd.DataFrame({
-        'Mean': cluster_0[numeric_cols].mean(),
-        'Mode': cluster_0[numeric_cols].mode().iloc[0],
-        'Min': cluster_0[numeric_cols].min(),
-        'Max': cluster_0[numeric_cols].max(),
-        'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
-        'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
-        'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
-    })
+            numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
+            summary = pd.DataFrame({
+                'Mean': cluster_0[numeric_cols].mean(),
+                'Mode': cluster_0[numeric_cols].mode().iloc[0],
+                'Min': cluster_0[numeric_cols].min(),
+                'Max': cluster_0[numeric_cols].max(),
+                'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
+                'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
+                'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
+            })
 
-    st.dataframe(summary.round(2))
+            st.dataframe(summary.round(2))
