@@ -17,9 +17,9 @@ st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("KMeans 기반 시계열 군집 분석")
 
 # 한글 폰트 설정
-font_path = './NanumGothic-Regular.ttf'  # 파일을 프로젝트 폴더에 포함시켜야 함
-font_prop = fm.FontProperties(fname=font_path)
-plt.rcParams['font.family'] = font_prop.get_name()
+# font_path = './NanumGothic-Regular.ttf'  # 파일을 프로젝트 폴더에 포함시켜야 함
+# font_prop = fm.FontProperties(fname=font_path)
+# plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
 # 데이터 로딩 및 전처리
