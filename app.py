@@ -95,7 +95,7 @@ if st.button("클러스터링 수행"):
         plt.scatter(df_pca[:, 0], df_pca[:, 1], c=clusters, cmap='tab10', alpha=0.7)
         plt.xlabel('PCA 1')
         plt.ylabel('PCA 2')
-        plt.title('PCA 기반 클러스터 시각화')
+        plt.title('PCA Method')
         plt.colorbar(label='Cluster')
         plt.grid()
         st.pyplot(fig2)
@@ -109,7 +109,7 @@ if st.button("클러스터링 수행"):
 
             fig3 = plt.figure(figsize=(5, 3))
             plt.scatter(df['tsne_1'], df['tsne_2'], c=df['cluster'], cmap='tab10', s=10, alpha=0.7)
-            plt.title("t-SNE 기반 클러스터 시각화")
+            plt.title("t-SNE Method")
             plt.xlabel("t-SNE 1")
             plt.ylabel("t-SNE 2")
             plt.colorbar(label="Cluster")
