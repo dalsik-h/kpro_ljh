@@ -10,6 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 import matplotlib.font_manager as fm
+import matplotlib.patches as patches
 
 # 페이지 설정
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
@@ -162,14 +163,33 @@ if st.button("클러스터링 수행"):
     # 오버레이 텍스트 출력 (위치: 유량(1) 기준 수동 지정)
     base_x, base_y = 410, 450
     line_height = 40
+
+    max_width = 140   # 박스 고정 너비
+    box_height = 22   # 한 줄 높이
+
     for i, (label, value) in enumerate(stats.items()):
+        y = base_y + i * line_height
+        text = f"{label}: {value}"
+
+        # 1. 고정 사각형 그리기
+        ax.add_patch(patches.Rectangle(
+            (base_x, y - 15),  # 좌상단 기준 위치
+            max_width,         # 너비 고정
+            box_height,        # 높이 고정
+            linewidth=1,
+            edgecolor='gray',
+            facecolor='white',
+            alpha=0.8
+        ))
+
+        # 2. 그 위에 텍스트 쓰기
         ax.text(
-            base_x,
-            base_y + i * line_height,
-            f"{label}: {value}",
-            fontsize=4,
+            base_x + 5, y, text,
+            fontsize=5,
             color='black',
-            bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray')
+            verticalalignment='top'
         )
+
+    
 
     st.pyplot(fig)
