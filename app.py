@@ -140,9 +140,9 @@ if st.button("클러스터링 수행"):
         'Mode': cluster_0[numeric_cols].mode().iloc[0],
         'Min': cluster_0[numeric_cols].min(),
         'Max': cluster_0[numeric_cols].max(),
-        'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
-        'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
-        'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
+        'Q1': cluster_0[numeric_cols].quantile(0.25),
+        'Q2': cluster_0[numeric_cols].quantile(0.5),
+        'Q3': cluster_0[numeric_cols].quantile(0.75),
     })
 
     st.dataframe(summary.round(2))
@@ -153,7 +153,7 @@ if st.button("클러스터링 수행"):
     image = Image.open("./back_img2.jpg")  # 업로드한 배경 이미지
 
     # ngt_flow_5 컬럼 요약
-    col = "ngt_flow_5"
+    col = "남계터널 출구부 유량"
     stats = summary.loc[col].round(2)
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -167,29 +167,44 @@ if st.button("클러스터링 수행"):
     max_width = 160   # 박스 고정 너비
     box_height = 40   # 한 줄 높이
 
+        # 0. 제목 줄
+    ax.add_patch(patches.Rectangle(
+        (base_x, base_y - 15),
+        max_width,
+        box_height,
+        linewidth=1,
+        edgecolor='blue',
+        facecolor='lightgray',
+        alpha=0.9
+    ))
+    ax.text(
+        base_x + 5, base_y,
+        col,  # 컬럼명
+        fontsize=7,
+        weight='bold',
+        color='black',
+        verticalalignment='top'
+    )
+
+    # 1. 통계값 줄들
     for i, (label, value) in enumerate(stats.items()):
-        y = base_y + i * line_height
+        y = base_y + (i + 1) * line_height
         text = f"{label}: {value}"
 
-        # 1. 고정 사각형 그리기
         ax.add_patch(patches.Rectangle(
-            (base_x, y - 15),  # 좌상단 기준 위치
-            max_width,         # 너비 고정
-            box_height,        # 높이 고정
+            (base_x, y - 15),
+            max_width,
+            box_height,
             linewidth=1,
             edgecolor='black',
             facecolor='white',
             alpha=0.9
         ))
-
-        # 2. 그 위에 텍스트 쓰기
         ax.text(
             base_x + 5, y, text,
             fontsize=5,
             color='black',
             verticalalignment='top'
         )
-
-    
 
     st.pyplot(fig)
