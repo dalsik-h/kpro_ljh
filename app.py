@@ -8,12 +8,14 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
+import matplotlib.font_manager as fm
 
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("📊 KMeans 기반 시계열 군집 분석")
 
-# 한글 폰트 (리눅스 호환)
-plt.rcParams['font.family'] = 'DejaVu Sans'
+# 한글 폰트 설정 (Nanum Gothic 또는 사용자 업로드 폰트)
+font_path = fm.findfont("DejaVu Sans")  # 리눅스 호환 기본 폰트 대체
+plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
 # 데이터 로딩 및 전처리 캐싱
@@ -40,7 +42,7 @@ if st.button("Elbow Method 실행"):
         kmeans.fit(df_scaled)
         inertia.append(kmeans.inertia_)
 
-    fig1 = plt.figure(figsize=(8, 4))
+    fig1 = plt.figure(figsize=(6, 3))
     plt.plot(K_range, inertia, marker='o')
     plt.xlabel('k (Number of Clusters)')
     plt.ylabel('Inertia')
@@ -88,7 +90,7 @@ if st.button("클러스터링 수행"):
     with tab1:
         pca = PCA(n_components=2)
         df_pca = pca.fit_transform(df_scaled)
-        fig2 = plt.figure(figsize=(8, 6))
+        fig2 = plt.figure(figsize=(6, 4))
         plt.scatter(df_pca[:, 0], df_pca[:, 1], c=clusters, cmap='tab10', alpha=0.7)
         plt.xlabel('PCA 1')
         plt.ylabel('PCA 2')
@@ -104,7 +106,7 @@ if st.button("클러스터링 수행"):
             df['tsne_1'] = tsne_result[:, 0]
             df['tsne_2'] = tsne_result[:, 1]
 
-            fig3 = plt.figure(figsize=(10, 6))
+            fig3 = plt.figure(figsize=(6, 4))
             plt.scatter(df['tsne_1'], df['tsne_2'], c=df['cluster'], cmap='tab10', s=10, alpha=0.7)
             plt.title("t-SNE 기반 클러스터 시각화")
             plt.xlabel("t-SNE 1")
