@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from PIL import Image
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -144,3 +145,31 @@ if st.button("클러스터링 수행"):
     })
 
     st.dataframe(summary.round(2))
+
+    
+
+    st.subheader("8. 유량(1) 위치에 ngt_flow_5 통계값 표시")
+    image = Image.open("./back_img2.jpg")  # 업로드한 배경 이미지
+
+    # ngt_flow_5 컬럼 요약
+    col = "ngt_flow_5"
+    stats = summary.loc[col].round(2)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.imshow(image)
+    ax.axis('off')
+
+    # 오버레이 텍스트 출력 (위치: 유량(1) 기준 수동 지정)
+    base_x, base_y = 110, 270
+    line_height = 20
+    for i, (label, value) in enumerate(stats.items()):
+        ax.text(
+            base_x,
+            base_y + i * line_height,
+            f"{label}: {value}",
+            fontsize=11,
+            color='black',
+            bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray')
+        )
+
+    st.pyplot(fig)
