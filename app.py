@@ -103,18 +103,19 @@ if st.button("클러스터링 수행"):
     with tab2:
         if st.button("t-SNE 시각화 실행"):
             tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
-            tsne_result = tsne.fit_transform(df_scaled)
-            df['tsne_1'] = tsne_result[:, 0]
-            df['tsne_2'] = tsne_result[:, 1]
+            with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
+                tsne_result = tsne.fit_transform(df_scaled)
+                df['tsne_1'] = tsne_result[:, 0]
+                df['tsne_2'] = tsne_result[:, 1]
 
-            fig3 = plt.figure(figsize=(5, 3))
-            plt.scatter(df['tsne_1'], df['tsne_2'], c=df['cluster'], cmap='tab10', s=10, alpha=0.7)
-            plt.title("t-SNE Method")
-            plt.xlabel("t-SNE 1")
-            plt.ylabel("t-SNE 2")
-            plt.colorbar(label="Cluster")
-            plt.grid()
-            st.pyplot(fig3)
+                fig3 = plt.figure(figsize=(5, 3))
+                plt.scatter(df['tsne_1'], df['tsne_2'], c=df['cluster'], cmap='tab10', s=10, alpha=0.7)
+                plt.title("t-SNE Method")
+                plt.xlabel("t-SNE 1")
+                plt.ylabel("t-SNE 2")
+                plt.colorbar(label="Cluster")
+                plt.grid()
+                st.pyplot(fig3)
 
     # 클러스터 0 통계 요약
     st.subheader("7. 클러스터 0 통계 요약")
