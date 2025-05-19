@@ -160,14 +160,14 @@ if st.button("클러스터링 수행"):
     ax.axis('off')
 
     # 오버레이 텍스트 출력 (위치: 유량(1) 기준 수동 지정)
-    base_x, base_y = 210, 350
-    line_height = 30
+    base_x, base_y = 410, 450
+    line_height = 40
     for i, (label, value) in enumerate(stats.items()):
         ax.text(
             base_x,
             base_y + i * line_height,
             f"{label}: {value}",
-            fontsize=8,
+            fontsize=4,
             color='black',
             bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray')
         )
