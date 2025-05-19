@@ -124,24 +124,24 @@ if st.button("클러스터링 수행"):
             plt.grid()
             st.pyplot(fig3)
 
-            # 클러스터 0 통계 요약 다시 표시
-            st.subheader("7. 클러스터 0 통계 요약")
-            cluster_0 = df[df['cluster'] == 0]
-            total_len = len(df)
-            cluster_0_len = len(cluster_0)
-            percentage = cluster_0_len / total_len * 100
+    # 클러스터 0 통계 요약 다시 표시
+    st.subheader("7. 클러스터 0 통계 요약")
+    cluster_0 = df[df['cluster'] == 0]
+    total_len = len(df)
+    cluster_0_len = len(cluster_0)
+    percentage = cluster_0_len / total_len * 100
 
-            st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+    st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
 
-            numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
-            summary = pd.DataFrame({
-                'Mean': cluster_0[numeric_cols].mean(),
-                'Mode': cluster_0[numeric_cols].mode().iloc[0],
-                'Min': cluster_0[numeric_cols].min(),
-                'Max': cluster_0[numeric_cols].max(),
-                'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
-                'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
-                'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
-            })
+    numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
+    summary = pd.DataFrame({
+        'Mean': cluster_0[numeric_cols].mean(),
+        'Mode': cluster_0[numeric_cols].mode().iloc[0],
+        'Min': cluster_0[numeric_cols].min(),
+        'Max': cluster_0[numeric_cols].max(),
+        'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
+        'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
+        'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
+    })
 
-            st.dataframe(summary.round(2))
+    st.dataframe(summary.round(2))
