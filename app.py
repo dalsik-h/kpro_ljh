@@ -152,21 +152,29 @@ if st.button("클러스터링 수행"):
 
     st.subheader("8. 클러스터 대표 샘플 조회")
 
-    if 'cluster' in df.columns:
-        with st.form(key="representative_sample_form"):
-            cluster_labels = sorted(df['cluster'].unique())
-            cluster_choice = st.slider("대표 샘플을 볼 클러스터 번호를 선택하세요", min_value=min(cluster_labels), max_value=max(cluster_labels), step=1)
-            submitted = st.form_submit_button("대표 샘플 보기")
+    # 상태 초기화
+    if "cluster_choice" not in st.session_state:
+        st.session_state.cluster_choice = 0
 
-        if submitted:
-            # 클러스터 중심과 가장 가까운 샘플 구하기
+    if 'cluster' in df.columns:
+        cluster_labels = sorted(df['cluster'].unique())
+
+        # 슬라이더로 상태 업데이트
+        st.session_state.cluster_choice = st.slider(
+            "대표 샘플을 볼 클러스터 번호를 선택하세요",
+            min_value=min(cluster_labels),
+            max_value=max(cluster_labels),
+            value=st.session_state.cluster_choice,
+            step=1
+        )
+
+        if st.button("대표 샘플 보기"):
             centers = kmeans.cluster_centers_
             indices, distances = pairwise_distances_argmin_min(centers, df_scaled)
-
-            rep_index = indices[cluster_choice]  # 선택된 클러스터의 대표 인덱스
+            rep_index = indices[st.session_state.cluster_choice]
             rep_row = df.iloc[rep_index]
 
-            st.markdown(f"**클러스터 {cluster_choice}의 대표 시간대: {rep_row.name}**")
+            st.markdown(f"**클러스터 {st.session_state.cluster_choice}의 대표 시간대: {rep_row.name}**")
             st.dataframe(rep_row.to_frame(name='Value'))
     else:
         st.warning("먼저 클러스터링을 수행해주세요.")
