@@ -153,7 +153,8 @@ if st.button("클러스터링 수행"):
     image = Image.open("./back_img2.jpg")  # 업로드한 배경 이미지
 
     # ngt_flow_5 컬럼 요약
-    col = "남계터널 출구부 유량"
+    col = "ngt_flow_5"
+    col_title = "남계터널 출구 유량"
     stats = summary.loc[col].round(2)
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -179,7 +180,7 @@ if st.button("클러스터링 수행"):
     ))
     ax.text(
         base_x + 5, base_y,
-        col,  # 컬럼명
+        col_title,  # 컬럼명
         fontsize=7,
         weight='bold',
         color='black',
