@@ -14,13 +14,9 @@ st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("KMeans 기반 시계열 군집 분석")
 
 # 한글 폰트 설정 (NanumGothic 설치된 경우 우선 사용)
-font_paths = fm.findSystemFonts(fontpaths=None, fontext='ttf')
-nanum_fonts = [fp for fp in font_paths if 'NanumGothic' in fp]
-if nanum_fonts:
-    plt.rcParams['font.family'] = fm.FontProperties(fname=nanum_fonts[0]).get_name()
-else:
-    font_path = fm.findfont("DejaVu Sans")
-    plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
+font_path = './NanumGothic-Regular.ttf'
+font_prop = fm.FontProperties(fname=font_path)
+plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
 # 데이터 로딩 및 전처리 캐싱
@@ -95,7 +91,7 @@ if st.button("클러스터링 수행"):
     with tab1:
         pca = PCA(n_components=2)
         df_pca = pca.fit_transform(df_scaled)
-        fig2 = plt.figure(figsize=(5, 3))
+        fig2 = plt.figure(figsize=(4, 2))
         plt.scatter(df_pca[:, 0], df_pca[:, 1], c=clusters, cmap='tab10', alpha=0.7)
         plt.xlabel('PCA 1')
         plt.ylabel('PCA 2')
