@@ -11,6 +11,7 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 import matplotlib.font_manager as fm
 import matplotlib.patches as patches
+from sklearn.metrics import pairwise_distances_argmin_min
 
 # 페이지 설정
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
@@ -147,9 +148,29 @@ if st.button("클러스터링 수행"):
 
     st.dataframe(summary.round(2))
 
-    
 
-    st.subheader("8. 관망도 상 클러스터 '0' 통계값 표시")
+
+    st.subheader("8. 클러스터 대표 샘플 조회")
+
+    if 'cluster' in df.columns:
+        cluster_choice = st.selectbox("대표 샘플을 볼 클러스터를 선택하세요", sorted(df['cluster'].unique()))
+
+        # 선택한 클러스터의 중심과 가장 가까운 샘플 구하기
+        centers = kmeans.cluster_centers_
+        indices, distances = pairwise_distances_argmin_min(centers, df_scaled)
+
+        rep_index = indices[cluster_choice]  # 선택된 클러스터의 대표 인덱스
+        rep_row = df.iloc[rep_index]
+
+        st.markdown(f"** 클러스터 {cluster_choice}의 대표 시간대: {rep_row.name}**")
+        st.dataframe(rep_row.to_frame(name='Value'))
+    else:
+        st.warning("먼저 클러스터링을 수행해주세요.")
+
+
+
+
+    st.subheader("9. 관망도 상 대표 샘플 표시")
     image = Image.open("./back_img2.jpg")  # 업로드한 배경 이미지
 
     # ngt_flow_5 컬럼 요약
