@@ -91,7 +91,7 @@ if st.button("클러스터링 수행"):
     with tab1:
         pca = PCA(n_components=2)
         df_pca = pca.fit_transform(df_scaled)
-        fig2 = plt.figure(figsize=(4, 2))
+        fig2 = plt.figure(figsize=(5, 3))
         plt.scatter(df_pca[:, 0], df_pca[:, 1], c=clusters, cmap='tab10', alpha=0.7)
         plt.xlabel('PCA 1')
         plt.ylabel('PCA 2')
@@ -101,47 +101,53 @@ if st.button("클러스터링 수행"):
         st.pyplot(fig2)
 
     with tab2:
-        if st.button("t-SNE 시각화 실행"):
-            st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
+        if "clustered" in st.session_state and st.session_state["clustered"]:
+            df = st.session_state["df"]
+            df_scaled = st.session_state["df_scaled"]
 
-            df_sample = df_scaled.copy()
-            if len(df_scaled) > 1000:
-                df_sample = df_scaled.sample(n=1000, random_state=42)
-                cluster_sample = df['cluster'].iloc[df_sample.index]
-            else:
-                cluster_sample = df['cluster']
+            if st.button("t-SNE 시각화 실행"):
+                st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
 
-            with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
-                tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
-                tsne_result = tsne.fit_transform(df_sample)
+                df_sample = df_scaled.copy()
+                if len(df_scaled) > 1000:
+                    df_sample = df_scaled.sample(n=1000, random_state=42)
+                    cluster_sample = df['cluster'].iloc[df_sample.index]
+                else:
+                    cluster_sample = df['cluster']
 
-            fig3 = plt.figure(figsize=(5, 3))
-            plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
-            plt.title("t-SNE 기반 클러스터 시각화")
-            plt.xlabel("t-SNE 1")
-            plt.ylabel("t-SNE 2")
-            plt.colorbar(label="Cluster")
-            plt.grid()
-            st.pyplot(fig3)
+                with st.spinner("t-SNE 계산 중입니다... 시간이 걸릴 수 있어요."):
+                    tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+                    tsne_result = tsne.fit_transform(df_sample)
 
-    # 클러스터 0 통계 요약 다시 표시
-    st.subheader("7. 클러스터 0 통계 요약")
-    cluster_0 = df[df['cluster'] == 0]
-    total_len = len(df)
-    cluster_0_len = len(cluster_0)
-    percentage = cluster_0_len / total_len * 100
+                fig3 = plt.figure(figsize=(5, 3))
+                plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
+                plt.title("t-SNE 기반 클러스터 시각화")
+                plt.xlabel("t-SNE 1")
+                plt.ylabel("t-SNE 2")
+                plt.colorbar(label="Cluster")
+                plt.grid()
+                st.pyplot(fig3)
 
-    st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+                # 클러스터 0 통계 요약 다시 표시
+                st.subheader("7. 클러스터 0 통계 요약")
+                cluster_0 = df[df['cluster'] == 0]
+                total_len = len(df)
+                cluster_0_len = len(cluster_0)
+                percentage = cluster_0_len / total_len * 100
 
-    numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
-    summary = pd.DataFrame({
-        'Mean': cluster_0[numeric_cols].mean(),
-        'Mode': cluster_0[numeric_cols].mode().iloc[0],
-        'Min': cluster_0[numeric_cols].min(),
-        'Max': cluster_0[numeric_cols].max(),
-        'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
-        'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
-        'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
-    })
+                st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
 
-    st.dataframe(summary.round(2))
+                numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
+                summary = pd.DataFrame({
+                    'Mean': cluster_0[numeric_cols].mean(),
+                    'Mode': cluster_0[numeric_cols].mode().iloc[0],
+                    'Min': cluster_0[numeric_cols].min(),
+                    'Max': cluster_0[numeric_cols].max(),
+                    'Q1 (25%)': cluster_0[numeric_cols].quantile(0.25),
+                    'Q2 (Median)': cluster_0[numeric_cols].quantile(0.5),
+                    'Q3 (75%)': cluster_0[numeric_cols].quantile(0.75),
+                })
+
+                st.dataframe(summary.round(2))
+        else:
+            st.warning("먼저 클러스터링을 수행해 주세요.")
