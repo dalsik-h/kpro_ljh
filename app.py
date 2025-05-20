@@ -172,40 +172,40 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         st.markdown(f"**클러스터 {st.session_state.cluster_choice}의 대표 시간대: {rep_row.name}**")
         st.dataframe(rep_row.to_frame(name='Value'))
 
-    st.subheader("9. 관망도 상 대표 샘플 표시")
-    image = Image.open("./back_img2.jpg")
-    col = "ngt_flow_5"
-    col_title = "남계터널 출구 유량"
-    stats = summary.loc[col].round(2)
+        st.subheader("9. 관망도 상 대표 샘플 표시")
+        image = Image.open("./back_img2.jpg")
+        col = "ngt_flow_5"
+        col_title = "남계터널 출구 유량"
+        stats = summary.loc[col].round(2)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.imshow(image)
-    ax.axis('off')
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.imshow(image)
+        ax.axis('off')
 
-    base_x, base_y = 410, 450
-    line_height = 40
-    max_width = 160
-    box_height = 40
+        base_x, base_y = 410, 450
+        line_height = 40
+        max_width = 160
+        box_height = 40
 
-    ax.add_patch(patches.Rectangle(
-        (base_x, base_y - 15), max_width, box_height,
-        linewidth=1, edgecolor='blue', facecolor='lightgray', alpha=0.9
-    ))
-    ax.text(
-        base_x + 5, base_y, col_title,
-        fontsize=7, weight='bold', color='black', verticalalignment='top'
-    )
-
-    for i, (label, value) in enumerate(stats.items()):
-        y = base_y + (i + 1) * line_height
-        text = f"{label}: {value}"
         ax.add_patch(patches.Rectangle(
-            (base_x, y - 15), max_width, box_height,
-            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+            (base_x, base_y - 15), max_width, box_height,
+            linewidth=1, edgecolor='blue', facecolor='lightgray', alpha=0.9
         ))
         ax.text(
-            base_x + 5, y, text,
-            fontsize=5, color='black', verticalalignment='top'
+            base_x + 5, base_y, col_title,
+            fontsize=7, weight='bold', color='black', verticalalignment='top'
         )
 
-    st.pyplot(fig)
+        for i, (label, value) in enumerate(stats.items()):
+            y = base_y + (i + 1) * line_height
+            text = f"{label}: {value}"
+            ax.add_patch(patches.Rectangle(
+                (base_x, y - 15), max_width, box_height,
+                linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+            ))
+            ax.text(
+                base_x + 5, y, text,
+                fontsize=5, color='black', verticalalignment='top'
+            )
+
+        st.pyplot(fig)
