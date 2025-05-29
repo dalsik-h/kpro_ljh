@@ -1,0 +1,7 @@
+# .streamlit/config.toml
+[runner]
+magicEnabled = true
+
+[server]
+headless = true
+enableCORS = false
