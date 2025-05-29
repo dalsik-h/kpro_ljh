@@ -223,7 +223,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         y = base_y + 1 * line_height
         text = f"{value}"
         ax.add_patch(patches.Rectangle(
-            (base_x, y - 20), max_width, box_height,
+            (base_x, y - 15), max_width, box_height,
             linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
         ))
         ax.text(
