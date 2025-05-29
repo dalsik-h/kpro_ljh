@@ -14,6 +14,10 @@ import matplotlib.font_manager as fm
 import matplotlib.patches as patches
 from sklearn.metrics import pairwise_distances_argmin_min
 
+# 한글 폰트 설정
+plt.rcParams['font.family'] = 'Malgun Gothic'  # Windows
+plt.rcParams['axes.unicode_minus'] = False     # 마이너스 깨짐 방지
+
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("KMeans 기반 시계열 군집 분석")
 plt.rcParams['axes.unicode_minus'] = False
