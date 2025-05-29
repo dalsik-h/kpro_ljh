@@ -194,7 +194,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ax.imshow(image)
         ax.axis('off')
 
-        base_x, base_y = 380, 250
+        base_x, base_y = 360, 200
         line_height = 41
         max_width = 160
         box_height = 40
