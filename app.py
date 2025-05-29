@@ -195,7 +195,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ax.axis('off')
 
         base_x, base_y = 410, 450
-        line_height = 40
+        line_height = 45
         max_width = 160
         box_height = 40
 
