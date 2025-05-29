@@ -1,4 +1,4 @@
-# 🔄 전체 앱 코드에서 session_state 기반 상태 저장 및 유지 적용
+# 전체 앱 코드에서 session_state 기반 상태 저장 및 유지 적용
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -122,7 +122,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
     with tab2:
         if st.button("t-SNE 시각화 실행"):
-            st.info("⚠️ 약간의 시간이 걸릴 수 있어요. 잠시만 기다려 주세요.")
+            st.info("잠시만 기다려 주세요.")
             df_sample = df_scaled.copy()
             if len(df_scaled) > 1000:
                 df_sample = df_scaled.sample(n=1000, random_state=42)
@@ -174,9 +174,10 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         st.subheader("9. 관망도 상 대표 샘플 표시")
         image = Image.open("./back_img2.jpg")
-        col = "ngt_flow_5"
-        col_title = "남계터널 출구 유량"
-        stats = summary.loc[col].round(2)
+
+        col_a = "jhj_flow_1"
+        col_a_title = "접합정 출구 유량"
+        value = rep_row[col_a]
 
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.imshow(image)
@@ -192,20 +193,29 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             linewidth=1, edgecolor='blue', facecolor='lightgray', alpha=0.9
         ))
         ax.text(
-            base_x + 5, base_y, col_title,
+            base_x + 5, base_y, col_a_title,
             fontsize=7, weight='bold', color='black', verticalalignment='top'
         )
 
-        for i, (label, value) in enumerate(stats.items()):
-            y = base_y + (i + 1) * line_height
-            text = f"{label}: {value}"
-            ax.add_patch(patches.Rectangle(
-                (base_x, y - 15), max_width, box_height,
-                linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
-            ))
-            ax.text(
-                base_x + 5, y, text,
-                fontsize=5, color='black', verticalalignment='top'
-            )
-
+        # for i, (label, value) in enumerate(stats.items()):
+        #     y = base_y + (i + 1) * line_height
+        #     text = f"{label}: {value}"
+        #     ax.add_patch(patches.Rectangle(
+        #         (base_x, y - 15), max_width, box_height,
+        #         linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        #     ))
+        #     ax.text(
+        #         base_x + 5, y, text,
+        #         fontsize=5, color='black', verticalalignment='top'
+        #     )
+        y = base_y + 1 * line_height
+        text = f"{value}"
+        ax.add_patch(patches.Rectangle(
+            (base_x, y - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x + 5, y, text,
+            fontsize=5, color='black', verticalalignment='top'
+        )
         st.pyplot(fig)
