@@ -228,6 +228,6 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ))
         ax.text(
             base_x + 5, y, text,
-            fontsize=5, color='black', verticalalignment='top', horizontalalignment='center'
+            fontsize=5, color='black', verticalalignment='top'
         )
         st.pyplot(fig)
