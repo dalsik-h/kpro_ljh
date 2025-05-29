@@ -201,11 +201,12 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         ax.add_patch(patches.Rectangle(
             (base_x, base_y - 15), max_width, box_height,
-            linewidth=1, edgecolor='red', facecolor='lightgray', alpha=0.9
+            linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
         ))
         ax.text(
             base_x + 5, base_y, col_a_title,
-            fontsize=7, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            fontsize=6, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop,
+            horizontalalignment='center'
         )
 
         # for i, (label, value) in enumerate(stats.items()):
@@ -222,11 +223,11 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         y = base_y + 1 * line_height
         text = f"{value}"
         ax.add_patch(patches.Rectangle(
-            (base_x, y - 15), max_width, box_height,
+            (base_x, y - 20), max_width, box_height,
             linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
         ))
         ax.text(
             base_x + 5, y, text,
-            fontsize=5, color='black', verticalalignment='top'
+            fontsize=5, color='black', verticalalignment='top', horizontalalignment='center'
         )
         st.pyplot(fig)
