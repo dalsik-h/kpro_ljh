@@ -205,7 +205,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ))
         ax.text(
             base_x + 5, base_y, col_a_title,
-            fontsize=6, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
     
         )
 
