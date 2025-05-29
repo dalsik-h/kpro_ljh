@@ -245,7 +245,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 포항시(분) 유량
         col_c = "phb_flow_3"
         col_c_title = "포항시(분) 유량"
-        base_x3, base_y3 = 1400, 90
+        base_x3, base_y3 = 1400, 100
         ax.add_patch(patches.Rectangle(
             (base_x3, base_y3 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
@@ -263,6 +263,30 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ))
         ax.text(
             base_x3 + 5, y3, text,
+            fontsize=5, color='black', verticalalignment='top'
+        )
+
+        # 학야(정) 유입유량
+        col_d = "hyj_flow_4"
+        col_d_title = "학야(정) 유입유량"
+        base_x4, base_y4 = 1250, 500
+        ax.add_patch(patches.Rectangle(
+            (base_x4, base_y4 - 15), max_width, box_height,
+            linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+        ))
+        ax.text(
+            base_x4 + 5, base_y4, col_d_title,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+        y4 = base_y4 + 1 * line_height
+        text = f"{rep_row[col_d]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x4, y4 - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x4 + 5, y4, text,
             fontsize=5, color='black', verticalalignment='top'
         )
 
