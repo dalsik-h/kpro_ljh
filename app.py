@@ -194,9 +194,9 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ax.imshow(image)
         ax.axis('off')
 
-        base_x, base_y = 360, 200
+        base_x, base_y = 350, 190
         line_height = 41
-        max_width = 160
+        max_width = 150
         box_height = 40
 
         ax.add_patch(patches.Rectangle(
