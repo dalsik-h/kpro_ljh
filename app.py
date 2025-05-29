@@ -13,12 +13,15 @@ from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bo
 import matplotlib.font_manager as fm
 import matplotlib.patches as patches
 from sklearn.metrics import pairwise_distances_argmin_min
+import os
 
-# 1. Malgun Gothic 경로 확인
-font_path = "C:/Windows/Fonts/malgun.ttf"
-font_prop = fm.FontProperties(fname=font_path)
+# 1. 경로 지정
+FONT_PATH = os.path.join(os.path.dirname(__file__), "NanumGothic.ttf")
 
-# 2. rcParams에 반영
+# 2. fontprop 객체 생성
+font_prop = fm.FontProperties(fname=FONT_PATH)
+
+# 3. rcParams에 반영
 plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
