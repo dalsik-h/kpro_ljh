@@ -186,10 +186,6 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         st.subheader("9. 관망도 상 대표 샘플 표시")
         image = Image.open("./back_img2.jpg")
 
-        col_a = "jhj_flow_1"
-        col_a_title = "접합정 출구 유량"
-        value = rep_row[col_a]
-
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.imshow(image)
         ax.axis('off')
@@ -199,6 +195,9 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         max_width = 150
         box_height = 40
 
+        # 접합정 출구부 유량
+        col_a = "jhj_flow_1"
+        col_a_title = "접합정 출구 유량"
         ax.add_patch(patches.Rectangle(
             (base_x, base_y - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
@@ -207,6 +206,40 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             base_x + 5, base_y, col_a_title,
             fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
     
+        )
+        y = base_y + 1 * line_height
+        text = f"{rep_row[col_a]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x, y - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x + 5, y, text,
+            fontsize=5, color='black', verticalalignment='top'
+        )
+
+        # 통합제수변실 유량
+        col_b = "tjv_flow_2"
+        col_b_title = "통합제수변실 유량"
+        base_x2, base_y2 = 600, 190
+        ax.add_patch(patches.Rectangle(
+            (base_x2, base_y2 - 15), max_width, box_height,
+            linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+        ))
+        ax.text(
+            base_x2 + 5, base_y2, col_b_title,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+        y2 = base_y2 + 1 * line_height
+        text = f"{rep_row[col_b]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x2, y2 - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x2 + 5, y2, text,
+            fontsize=5, color='black', verticalalignment='top'
         )
 
         # for i, (label, value) in enumerate(stats.items()):
@@ -220,14 +253,5 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         #         base_x + 5, y, text,
         #         fontsize=5, color='black', verticalalignment='top'
         #     )
-        y = base_y + 1 * line_height
-        text = f"{value}"
-        ax.add_patch(patches.Rectangle(
-            (base_x, y - 15), max_width, box_height,
-            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
-        ))
-        ax.text(
-            base_x + 5, y, text,
-            fontsize=5, color='black', verticalalignment='top'
-        )
+
         st.pyplot(fig)
