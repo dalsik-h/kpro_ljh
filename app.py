@@ -245,7 +245,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 포항시(분) 유량
         col_c = "phb_flow_3"
         col_c_title = "포항시(분) 유량"
-        base_x3, base_y3 = 1250, 70
+        base_x3, base_y3 = 1350, 80
         ax.add_patch(patches.Rectangle(
             (base_x3, base_y3 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
