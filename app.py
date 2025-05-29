@@ -269,7 +269,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 학야(정) 유입유량
         col_d = "hyj_flow_4"
         col_d_title = "학야(정) 유입유량"
-        base_x4, base_y4 = 1230, 550
+        base_x4, base_y4 = 1225, 550
         ax.add_patch(patches.Rectangle(
             (base_x4, base_y4 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
