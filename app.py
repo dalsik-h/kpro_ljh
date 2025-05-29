@@ -14,9 +14,13 @@ import matplotlib.font_manager as fm
 import matplotlib.patches as patches
 from sklearn.metrics import pairwise_distances_argmin_min
 
-# 한글 폰트 설정
-plt.rcParams['font.family'] = 'Malgun Gothic'  # Windows
-plt.rcParams['axes.unicode_minus'] = False     # 마이너스 깨짐 방지
+# 1. Malgun Gothic 경로 확인
+font_path = "C:/Windows/Fonts/malgun.ttf"
+font_prop = fm.FontProperties(fname=font_path)
+
+# 2. rcParams에 반영
+plt.rcParams['font.family'] = font_prop.get_name()
+plt.rcParams['axes.unicode_minus'] = False
 
 st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
 st.title("KMeans 기반 시계열 군집 분석")
@@ -194,11 +198,11 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         ax.add_patch(patches.Rectangle(
             (base_x, base_y - 15), max_width, box_height,
-            linewidth=1, edgecolor='blue', facecolor='lightgray', alpha=0.9
+            linewidth=1, edgecolor='red', facecolor='lightgray', alpha=0.9
         ))
         ax.text(
             base_x + 5, base_y, col_a_title,
-            fontsize=7, weight='bold', color='black', verticalalignment='top'
+            fontsize=7, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
         )
 
         # for i, (label, value) in enumerate(stats.items()):
