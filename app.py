@@ -195,7 +195,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ax.axis('off')
 
         base_x, base_y = 410, 450
-        line_height = 45
+        line_height = 42
         max_width = 160
         box_height = 40
 
@@ -205,8 +205,8 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ))
         ax.text(
             base_x + 5, base_y, col_a_title,
-            fontsize=6, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop,
-            horizontalalignment='center'
+            fontsize=6, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
         )
 
         # for i, (label, value) in enumerate(stats.items()):
