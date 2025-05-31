@@ -221,7 +221,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 통합제수변실 유량
         col_b = "tjv_flow_2"
         col_b_title = "통합제수변실 유량"
-        base_x2, base_y2 = 1050, 200
+        base_x2, base_y2 = 1070, 200
         ax.add_patch(patches.Rectangle(
             (base_x2, base_y2 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
@@ -364,7 +364,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 통합제수변실 밸브개도
         col_h = "thj_vv_open_1"
-        base_x8, base_y8 = 980, 200
+        base_x8, base_y8 = 1000, 200
         text = f"{rep_row[col_h]}"
         ax.add_patch(patches.Rectangle(
             (base_x8, base_y8 - 15), 50, box_height,
