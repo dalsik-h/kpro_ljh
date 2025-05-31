@@ -314,6 +314,30 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             fontsize=5, color='black', verticalalignment='top'
         )
 
+        # 남계터널출구 신관 유량
+        col_f = "ngt_sub_flow_6"
+        col_f_title = "남계터널 신관유량"
+        base_x6, base_y6 = 650, 440
+        ax.add_patch(patches.Rectangle(
+            (base_x6, base_y6 - 15), max_width, box_height,
+            linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+        ))
+        ax.text(
+            base_x6 + 5, base_y6, col_f_title,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+        y6 = base_y6 + 1 * line_height
+        text = f"{rep_row[col_f]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x6, y6 - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x6 + 5, y6, text,
+            fontsize=5, color='black', verticalalignment='top'
+        )
+
         # for i, (label, value) in enumerate(stats.items()):
         #     y = base_y + (i + 1) * line_height
         #     text = f"{label}: {value}"
