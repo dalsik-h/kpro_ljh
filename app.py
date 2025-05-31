@@ -154,15 +154,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             plt.grid()
             st.pyplot(fig3)
 
-    st.subheader("7. 클러스터 0 통계 요약")
-    cluster_0 = df[df['cluster'] == 0]
-    total_len = len(df)
-    cluster_0_len = len(cluster_0)
-    percentage = cluster_0_len / total_len * 100
-    st.markdown(f"**▣ 클러스터 '0'은 전체 {total_len:,}개 중 {cluster_0_len:,}개를 차지합니다. ({percentage:.2f}%)**")
-    st.dataframe(summary.round(2))
-
-    st.subheader("8. 클러스터 대표 샘플 조회")
+    st.subheader("7. 클러스터 대표 샘플 조회")
     if "cluster_choice" not in st.session_state:
         st.session_state.cluster_choice = 0
 
@@ -176,14 +168,22 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
     )
 
     if st.button("대표 샘플 보기"):
+        st.subheader(f"**(1)클러스터 {st.session_state.cluster_choice}의 통계 요약**")
+        cluster_chk = df[df['cluster'] == st.session_state.cluster_choice]
+        total_len = len(df)
+        cluster_chk_len = len(cluster_chk)
+        percentage = cluster_chk_len / total_len * 100
+        st.markdown(f"**▣ 클러스터 '{st.session_state.cluster_choice}'은 전체 {total_len:,}개 중 {cluster_chk_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+        st.dataframe(summary.round(2))
+
         centers = kmeans.cluster_centers_
         indices, distances = pairwise_distances_argmin_min(centers, df_scaled)
         rep_index = indices[st.session_state.cluster_choice]
         rep_row = df.iloc[rep_index]
-        st.markdown(f"**클러스터 {st.session_state.cluster_choice}의 대표 시간대: {rep_row.name}**")
+        st.markdown(f"**(2)클러스터 {st.session_state.cluster_choice}의 대표 시간대: {rep_row.name}**")
         st.dataframe(rep_row.to_frame(name='Value'))
 
-        st.subheader("9. 관망도 상 대표 샘플 표시")
+        st.subheader("**(3)관망도 상 대표 샘플 표시**")
         image = Image.open("./back_img2.jpg")
 
         fig, ax = plt.subplots(figsize=(10, 6))
