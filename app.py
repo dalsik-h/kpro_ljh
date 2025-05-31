@@ -396,7 +396,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         text = f"{rep_row[col_j]}"
         ax.add_patch(patches.Rectangle(
             (base_x10, base_y10 - 15), 50, box_height,
-            linewidth=1, edgecolor='blue', facecolor='lightsky', alpha=0.9
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
         ))
         ax.text(
             base_x10 + 5, base_y10, text,
