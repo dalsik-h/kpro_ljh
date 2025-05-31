@@ -317,7 +317,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 남계터널출구 신관 유량
         col_f = "ngt_sub_flow_6"
         col_f_title = "남계터널 신관유량"
-        base_x6, base_y6 = 620, 540
+        base_x6, base_y6 = 620, 520
         ax.add_patch(patches.Rectangle(
             (base_x6, base_y6 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
