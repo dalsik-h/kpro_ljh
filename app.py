@@ -404,6 +404,90 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
     
         )
 
+        # 포항시 분기 압력
+        col_k = "phb_pre_2"
+        base_x11, base_y11 = 1400, 80
+        text = f"{rep_row[col_k]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x11, base_y11 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x11 + 5, base_y11, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 학야(정) 유입 압력
+        col_l = "hyj_pre_3"
+        base_x12, base_y12 = 1150, 250
+        text = f"{rep_row[col_l]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x12, base_y12 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x12 + 5, base_y12, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 통합제수변실 #2 압력
+        col_m = "thj_pre_4"
+        base_x13, base_y13 = 1100, 350
+        text = f"{rep_row[col_m]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x13, base_y13 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x13 + 5, base_y13, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 안계댐 유입 압력
+        col_n = "agd_pre_5"
+        base_x14, base_y14 = 2200, 250
+        text = f"{rep_row[col_n]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x14, base_y14 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x14 + 5, base_y14, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 남계터널출구 신관 압력
+        col_o = "ngt_sub_pre_6"
+        base_x15, base_y15 = 720, 530
+        text = f"{rep_row[col_o]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x15, base_y15 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x15 + 5, base_y15, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 안계댐 유입 신관 압력
+        col_p = "agd_new_pre_7"
+        base_x16, base_y16 = 2400, 250
+        text = f"{rep_row[col_p]}kgf/cm²"
+        ax.add_patch(patches.Rectangle(
+            (base_x16, base_y16 - 15), 115, box_height,
+            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+        ))
+        ax.text(
+            base_x16 + 5, base_y16, text,
+            fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
         # for i, (label, value) in enumerate(stats.items()):
         #     y = base_y + (i + 1) * line_height
         #     text = f"{label}: {value}"
