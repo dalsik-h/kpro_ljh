@@ -362,16 +362,30 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             fontsize=5, color='black', verticalalignment='top'
         )
 
-        # 통합제수변실 밸브개도
+        # 통합제수변실 밸브 #1 개도
         col_h = "thj_vv_open_1"
         base_x8, base_y8 = 1010, 200
         text = f"{rep_row[col_h]}"
         ax.add_patch(patches.Rectangle(
             (base_x8, base_y8 - 15), 50, box_height,
-            linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+            linewidth=1, edgecolor='black', facecolor='lightgray', alpha=0.9
         ))
         ax.text(
             base_x8 + 5, base_y8, text,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 통합제수변실 밸브 #2 개도
+        col_i = "thj_vv_open_2"
+        base_x9, base_y9 = 980, 250
+        text = f"{rep_row[col_i]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x9, base_y9 - 15), 50, box_height,
+            linewidth=1, edgecolor='black', facecolor='lightgray', alpha=0.9
+        ))
+        ax.text(
+            base_x9 + 5, base_y9, text,
             fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
     
         )
