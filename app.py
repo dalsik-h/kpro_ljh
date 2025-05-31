@@ -378,7 +378,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 통합제수변실 밸브 #2 개도
         col_i = "thj_vv_open_2"
-        base_x9, base_y9 = 970, 270
+        base_x9, base_y9 = 970, 290
         text = f"{rep_row[col_i]}"
         ax.add_patch(patches.Rectangle(
             (base_x9, base_y9 - 15), 50, box_height,
