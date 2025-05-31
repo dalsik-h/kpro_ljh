@@ -341,7 +341,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         # 안계댐 유입 유량
         col_g = "agd_flow_7"
         col_g_title = "안계댐 유입유량"
-        base_x7, base_y7 = 1220, 210
+        base_x7, base_y7 = 1620, 210
         ax.add_patch(patches.Rectangle(
             (base_x7, base_y7 - 15), max_width, box_height,
             linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
