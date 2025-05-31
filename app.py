@@ -420,7 +420,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 학야(정) 유입 압력
         col_l = "hyj_pre_3"
-        base_x12, base_y12 = 1110, 550
+        base_x12, base_y12 = 1100, 550
         text = f"{rep_row[col_l]}kgf/cm²"
         ax.add_patch(patches.Rectangle(
             (base_x12, base_y12 - 15), 115, box_height,
@@ -434,7 +434,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 통합제수변실 #2 압력
         col_m = "thj_pre_4"
-        base_x13, base_y13 = 1050, 380
+        base_x13, base_y13 = 1000, 390
         text = f"{rep_row[col_m]}kgf/cm²"
         ax.add_patch(patches.Rectangle(
             (base_x13, base_y13 - 15), 115, box_height,
@@ -448,7 +448,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 안계댐 유입 압력
         col_n = "agd_pre_5"
-        base_x14, base_y14 = 1600, 290
+        base_x14, base_y14 = 1580, 310
         text = f"{rep_row[col_n]}kgf/cm²"
         ax.add_patch(patches.Rectangle(
             (base_x14, base_y14 - 15), 115, box_height,
@@ -462,7 +462,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 남계터널출구 신관 압력
         col_o = "ngt_sub_pre_6"
-        base_x15, base_y15 = 770, 540
+        base_x15, base_y15 = 780, 540
         text = f"{rep_row[col_o]}kgf/cm²"
         ax.add_patch(patches.Rectangle(
             (base_x15, base_y15 - 15), 115, box_height,
@@ -476,7 +476,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 안계댐 유입 신관 압력
         col_p = "agd_new_pre_7"
-        base_x16, base_y16 = 1700, 300
+        base_x16, base_y16 = 1800, 320
         text = f"{rep_row[col_p]}kgf/cm²"
         ax.add_patch(patches.Rectangle(
             (base_x16, base_y16 - 15), 115, box_height,
