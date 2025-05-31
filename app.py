@@ -392,7 +392,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
 
         # 통합제수변실 #1 압력
         col_j = "thj_pre_1"
-        base_x10, base_y10 = 1080, 160
+        base_x10, base_y10 = 1090, 150
         text = f"{rep_row[col_j]}"
         ax.add_patch(patches.Rectangle(
             (base_x10, base_y10 - 15), 50, box_height,
