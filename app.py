@@ -114,7 +114,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
     summary = st.session_state.summary
 
     st.subheader("5. 클러스터별 평균값")
-    st.dataframe(df.groupby('cluster').mean().round(2))
+    st.dataframe(df.groupby('cluster').agg(lambda x: x.mode().iloc[0]).round(2))
 
     st.subheader("6. 클러스터 시각화")
     tab1, tab2 = st.tabs(["PCA", "t-SNE"])
