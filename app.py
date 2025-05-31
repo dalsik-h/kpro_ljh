@@ -208,7 +208,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
     
         )
         y = base_y + 1 * line_height
-        text = f"{rep_row[col_a]}"
+        text = f"{rep_row[col_a].round(2)}"
         ax.add_patch(patches.Rectangle(
             (base_x, y - 15), max_width, box_height,
             linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
