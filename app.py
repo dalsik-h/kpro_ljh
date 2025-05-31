@@ -113,7 +113,7 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
     kmeans = st.session_state.kmeans
     summary = st.session_state.summary
 
-    st.subheader("5. 클러스터별 평균값")
+    st.subheader("5. 클러스터별 최빈값")
     st.dataframe(df.groupby('cluster').agg(lambda x: x.mode().iloc[0]).round(2))
 
     st.subheader("6. 클러스터 시각화")
@@ -386,6 +386,20 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
         ))
         ax.text(
             base_x9 + 5, base_y9, text,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+
+        # 통합제수변실 #1 압력
+        col_j = "thj_pre_1"
+        base_x10, base_y10 = 1050, 180
+        text = f"{rep_row[col_j]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x10, base_y10 - 15), 50, box_height,
+            linewidth=1, edgecolor='black', facecolor='lightgray', alpha=0.9
+        ))
+        ax.text(
+            base_x10 + 5, base_y10, text,
             fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
     
         )
