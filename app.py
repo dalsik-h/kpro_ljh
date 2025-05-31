@@ -338,6 +338,30 @@ if 'df' in st.session_state and 'kmeans' in st.session_state:
             fontsize=5, color='black', verticalalignment='top'
         )
 
+        # 안계댐 유입 유량
+        col_g = "agd_flow_7"
+        col_g_title = "안계댐 유입유량"
+        base_x7, base_y7 = 1220, 210
+        ax.add_patch(patches.Rectangle(
+            (base_x7, base_y7 - 15), max_width, box_height,
+            linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+        ))
+        ax.text(
+            base_x7 + 5, base_y7, col_g_title,
+            fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+    
+        )
+        y7 = base_y7 + 1 * line_height
+        text = f"{rep_row[col_g]}"
+        ax.add_patch(patches.Rectangle(
+            (base_x7, y7 - 15), max_width, box_height,
+            linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+        ))
+        ax.text(
+            base_x7 + 5, y7, text,
+            fontsize=5, color='black', verticalalignment='top'
+        )
+
         # for i, (label, value) in enumerate(stats.items()):
         #     y = base_y + (i + 1) * line_height
         #     text = f"{label}: {value}"
