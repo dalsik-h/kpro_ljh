@@ -124,7 +124,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
     df = st.session_state.df
     df_scaled = st.session_state.df_scaled
     gmm = st.session_state.gmm
-    summary = st.session_state.summary
+    # summary = st.session_state.summary
 
     st.subheader("5-1. 클러스터별 최빈값")
     st.dataframe(df.groupby('cluster').agg(lambda x: x.mode().iloc[0]).round(2))
