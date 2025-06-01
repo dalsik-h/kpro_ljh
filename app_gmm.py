@@ -94,7 +94,7 @@ if st.button("GMM 품질 지표 보기"):
 
 st.subheader("4. 클러스터링 실행")
 if st.button("클러스터링 수행"):
-    gmm = GaussianMixture(n_components=4, covariance_type='full', random_state=42)
+    gmm = GaussianMixture(n_components=6, covariance_type='full', random_state=42)
     clusters = gmm.fit_predict(df_scaled)
     df['cluster'] = clusters
     
