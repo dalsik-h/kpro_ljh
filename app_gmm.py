@@ -68,7 +68,7 @@ if st.button("GMM 클러스터 수 평가 실행"):
     plt.plot(k_list, aic, marker='s', label='AIC')
     plt.xlabel("Number of Clusters (k)")
     plt.ylabel("Score")
-    plt.title("GMM Optimal Number of Clusters Evaluation (BIC & AIC)")
+    plt.title("Evaluation of Optimal Number of Clusters (GMM - BIC & AIC)")
     plt.legend()
     plt.grid()
     st.pyplot(fig_gmm)
@@ -102,18 +102,85 @@ if st.button("클러스터링 수행"):
     st.session_state.df_scaled = df_scaled
     st.session_state.gmm = gmm
 
-    cluster_0 = df[df['cluster'] == 0]
     numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
-    summary = pd.DataFrame({
+
+    cluster_0 = df[df['cluster'] == 0]
+    summary_0 = pd.DataFrame({
         'Mean': cluster_0[numeric_cols].mean(),
         'Mode': cluster_0[numeric_cols].mode().iloc[0],
+        'Median': cluster_0[numeric_cols].median(),
         'Min': cluster_0[numeric_cols].min(),
         'Max': cluster_0[numeric_cols].max(),
         'Q1': cluster_0[numeric_cols].quantile(0.25),
         'Q2': cluster_0[numeric_cols].quantile(0.5),
         'Q3': cluster_0[numeric_cols].quantile(0.75),
     })
-    st.session_state.summary = summary
+    
+    cluster_1 = df[df['cluster'] == 1]
+    summary_1 = pd.DataFrame({
+        'Mean': cluster_1[numeric_cols].mean(),
+        'Mode': cluster_1[numeric_cols].mode().iloc[0],
+        'Median': cluster_1[numeric_cols].median(),
+        'Min': cluster_1[numeric_cols].min(),
+        'Max': cluster_1[numeric_cols].max(),
+        'Q1': cluster_1[numeric_cols].quantile(0.25),
+        'Q2': cluster_1[numeric_cols].quantile(0.5),
+        'Q3': cluster_1[numeric_cols].quantile(0.75),
+    })
+
+    cluster_2 = df[df['cluster'] == 2]
+    summary_2 = pd.DataFrame({
+        'Mean': cluster_2[numeric_cols].mean(),
+        'Mode': cluster_2[numeric_cols].mode().iloc[0],
+        'Median': cluster_2[numeric_cols].median(),
+        'Min': cluster_2[numeric_cols].min(),
+        'Max': cluster_2[numeric_cols].max(),
+        'Q1': cluster_2[numeric_cols].quantile(0.25),
+        'Q2': cluster_2[numeric_cols].quantile(0.5),
+        'Q3': cluster_2[numeric_cols].quantile(0.75),
+    })
+
+    cluster_3 = df[df['cluster'] == 3]
+    summary_3 = pd.DataFrame({
+        'Mean': cluster_3[numeric_cols].mean(),
+        'Mode': cluster_3[numeric_cols].mode().iloc[0],
+        'Median': cluster_3[numeric_cols].median(),
+        'Min': cluster_3[numeric_cols].min(),
+        'Max': cluster_3[numeric_cols].max(),
+        'Q1': cluster_3[numeric_cols].quantile(0.25),
+        'Q2': cluster_3[numeric_cols].quantile(0.5),
+        'Q3': cluster_3[numeric_cols].quantile(0.75),
+    })
+
+    cluster_4 = df[df['cluster'] == 4]
+    summary_4 = pd.DataFrame({
+        'Mean': cluster_4[numeric_cols].mean(),
+        'Mode': cluster_4[numeric_cols].mode().iloc[0],
+        'Median': cluster_4[numeric_cols].median(),
+        'Min': cluster_4[numeric_cols].min(),
+        'Max': cluster_4[numeric_cols].max(),
+        'Q1': cluster_4[numeric_cols].quantile(0.25),
+        'Q2': cluster_4[numeric_cols].quantile(0.5),
+        'Q3': cluster_4[numeric_cols].quantile(0.75),
+    })
+
+    cluster_5 = df[df['cluster'] == 5]
+    summary_5 = pd.DataFrame({
+        'Mean': cluster_5[numeric_cols].mean(),
+        'Mode': cluster_5[numeric_cols].mode().iloc[0],
+        'Median': cluster_5[numeric_cols].median(),
+        'Min': cluster_5[numeric_cols].min(),
+        'Max': cluster_5[numeric_cols].max(),
+        'Q1': cluster_5[numeric_cols].quantile(0.25),
+        'Q2': cluster_5[numeric_cols].quantile(0.5),
+        'Q3': cluster_5[numeric_cols].quantile(0.75),
+    })
+    st.session_state.summary_0 = summary_0
+    st.session_state.summary_1 = summary_1
+    st.session_state.summary_2 = summary_2
+    st.session_state.summary_3 = summary_3
+    st.session_state.summary_4 = summary_4
+    st.session_state.summary_5 = summary_5
     st.success("클러스터링 완료!")
 
 if 'df' in st.session_state and 'gmm' in st.session_state:
@@ -122,8 +189,11 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
     gmm = st.session_state.gmm
     summary = st.session_state.summary
 
-    st.subheader("5. 클러스터별 최빈값")
+    st.subheader("5-1. 클러스터별 최빈값")
     st.dataframe(df.groupby('cluster').agg(lambda x: x.mode().iloc[0]).round(2))
+
+    st.subheader("5-2. 클러스터별 중앙값")
+    st.dataframe(df.groupby('cluster').median().round(2))
 
     st.subheader("6. 클러스터 시각화")
     tab1, tab2 = st.tabs(["PCA", "t-SNE"])
@@ -183,6 +253,10 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         cluster_chk_len = len(cluster_chk)
         percentage = cluster_chk_len / total_len * 100
         st.markdown(f"**▣ 클러스터 '{st.session_state.cluster_choice}'은 전체 {total_len:,}개 중 {cluster_chk_len:,}개를 차지합니다. ({percentage:.2f}%)**")
+
+        summary_var_name = f"summary_{st.session_state.cluster_choice}"
+        summary = getattr(st.session_state, summary_var_name)
+
         st.dataframe(summary.round(2))
 
        
