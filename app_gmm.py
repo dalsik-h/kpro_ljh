@@ -68,7 +68,7 @@ if st.button("GMM 클러스터 수 평가 실행"):
     plt.plot(k_list, aic, marker='s', label='AIC')
     plt.xlabel("Number of Clusters (k)")
     plt.ylabel("Score")
-    plt.title("GMM 최적 클러스터 수 평가 (BIC & AIC)")
+    plt.title("GMM Optimal Number of Clusters Evaluation (BIC & AIC)")
     plt.legend()
     plt.grid()
     st.pyplot(fig_gmm)
@@ -116,10 +116,10 @@ if st.button("클러스터링 수행"):
     st.session_state.summary = summary
     st.success("클러스터링 완료!")
 
-if 'df' in st.session_state and 'kmeans' in st.session_state:
+if 'df' in st.session_state and 'gmm' in st.session_state:
     df = st.session_state.df
     df_scaled = st.session_state.df_scaled
-    kmeans = st.session_state.kmeans
+    gmm = st.session_state.gmm
     summary = st.session_state.summary
 
     st.subheader("5. 클러스터별 최빈값")
