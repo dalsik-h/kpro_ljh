@@ -104,83 +104,20 @@ if st.button("클러스터링 수행"):
 
     numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
 
-    cluster_0 = df[df['cluster'] == 0]
-    summary_0 = pd.DataFrame({
-        'Mean': cluster_0[numeric_cols].mean(),
-        'Mode': cluster_0[numeric_cols].mode().iloc[0],
-        'Median': cluster_0[numeric_cols].median(),
-        'Min': cluster_0[numeric_cols].min(),
-        'Max': cluster_0[numeric_cols].max(),
-        'Q1': cluster_0[numeric_cols].quantile(0.25),
-        'Q2': cluster_0[numeric_cols].quantile(0.5),
-        'Q3': cluster_0[numeric_cols].quantile(0.75),
-    })
-    
-    cluster_1 = df[df['cluster'] == 1]
-    summary_1 = pd.DataFrame({
-        'Mean': cluster_1[numeric_cols].mean(),
-        'Mode': cluster_1[numeric_cols].mode().iloc[0],
-        'Median': cluster_1[numeric_cols].median(),
-        'Min': cluster_1[numeric_cols].min(),
-        'Max': cluster_1[numeric_cols].max(),
-        'Q1': cluster_1[numeric_cols].quantile(0.25),
-        'Q2': cluster_1[numeric_cols].quantile(0.5),
-        'Q3': cluster_1[numeric_cols].quantile(0.75),
-    })
-
-    cluster_2 = df[df['cluster'] == 2]
-    summary_2 = pd.DataFrame({
-        'Mean': cluster_2[numeric_cols].mean(),
-        'Mode': cluster_2[numeric_cols].mode().iloc[0],
-        'Median': cluster_2[numeric_cols].median(),
-        'Min': cluster_2[numeric_cols].min(),
-        'Max': cluster_2[numeric_cols].max(),
-        'Q1': cluster_2[numeric_cols].quantile(0.25),
-        'Q2': cluster_2[numeric_cols].quantile(0.5),
-        'Q3': cluster_2[numeric_cols].quantile(0.75),
-    })
-
-    cluster_3 = df[df['cluster'] == 3]
-    summary_3 = pd.DataFrame({
-        'Mean': cluster_3[numeric_cols].mean(),
-        'Mode': cluster_3[numeric_cols].mode().iloc[0],
-        'Median': cluster_3[numeric_cols].median(),
-        'Min': cluster_3[numeric_cols].min(),
-        'Max': cluster_3[numeric_cols].max(),
-        'Q1': cluster_3[numeric_cols].quantile(0.25),
-        'Q2': cluster_3[numeric_cols].quantile(0.5),
-        'Q3': cluster_3[numeric_cols].quantile(0.75),
-    })
-
-    cluster_4 = df[df['cluster'] == 4]
-    summary_4 = pd.DataFrame({
-        'Mean': cluster_4[numeric_cols].mean(),
-        'Mode': cluster_4[numeric_cols].mode().iloc[0],
-        'Median': cluster_4[numeric_cols].median(),
-        'Min': cluster_4[numeric_cols].min(),
-        'Max': cluster_4[numeric_cols].max(),
-        'Q1': cluster_4[numeric_cols].quantile(0.25),
-        'Q2': cluster_4[numeric_cols].quantile(0.5),
-        'Q3': cluster_4[numeric_cols].quantile(0.75),
-    })
-
-    cluster_5 = df[df['cluster'] == 5]
-    summary_5 = pd.DataFrame({
-        'Mean': cluster_5[numeric_cols].mean(),
-        'Mode': cluster_5[numeric_cols].mode().iloc[0],
-        'Median': cluster_5[numeric_cols].median(),
-        'Min': cluster_5[numeric_cols].min(),
-        'Max': cluster_5[numeric_cols].max(),
-        'Q1': cluster_5[numeric_cols].quantile(0.25),
-        'Q2': cluster_5[numeric_cols].quantile(0.5),
-        'Q3': cluster_5[numeric_cols].quantile(0.75),
-    })
-    st.session_state.summary_0 = summary_0
-    st.session_state.summary_1 = summary_1
-    st.session_state.summary_2 = summary_2
-    st.session_state.summary_3 = summary_3
-    st.session_state.summary_4 = summary_4
-    st.session_state.summary_5 = summary_5
+    for i in range(6):  # 클러스터 0 ~ 5
+        cluster_df = df[df['cluster'] == i]
+        numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
+        summary = pd.DataFrame({
+            'Mean': cluster_df[numeric_cols].mean(),
+            'Mode': cluster_df[numeric_cols].mode().iloc[0],
+            'Median': cluster_df[numeric_cols].median(),
+            'Min': cluster_df[numeric_cols].min(),
+            'Max': cluster_df[numeric_cols].max(),
+            'Q1': cluster_df[numeric_cols].quantile(0.25),
+            'Q2': cluster_df[numeric_cols].quantile(0.5),
+            'Q3': cluster_df[numeric_cols].quantile(0.75),
+        })
+        st.session_state[f"summary_{i}"] = summary
     st.success("클러스터링 완료!")
 
 if 'df' in st.session_state and 'gmm' in st.session_state:
