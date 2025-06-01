@@ -25,8 +25,8 @@ font_prop = fm.FontProperties(fname=FONT_PATH)
 plt.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams['axes.unicode_minus'] = False
 
-st.set_page_config(page_title="KMeans Cluster 분석", layout="wide")
-st.title("KMeans 기반 시계열 군집 분석")
+st.set_page_config(page_title="GMM Cluster 분석", layout="wide")
+st.title("GMM 기반 시계열 군집 분석")
 plt.rcParams['axes.unicode_minus'] = False
 
 @st.cache_data
@@ -83,9 +83,9 @@ def evaluate_k_gmm(X, k):
         "davies": davies_bouldin_score(X, labels)
     }
 
-st.subheader("3. 클러스터 품질 평가 (GMM, k=3, 4)")
+st.subheader("3. 클러스터 품질 평가 (GMM, k=4, 5, 6)")
 if st.button("GMM 품질 지표 보기"):
-    for k in [3, 4]:
+    for k in [4, 5, 6]:
         result = evaluate_k_gmm(df_scaled, k)
         st.markdown(f"**▶ K = {k}**")
         st.markdown(f"- Silhouette Score: {result['silhouette']:.4f}")
