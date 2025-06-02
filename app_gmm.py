@@ -102,6 +102,9 @@ if st.button("클러스터링 수행"):
     st.session_state.df_scaled = df_scaled
     st.session_state.gmm = gmm
 
+    st.success("클러스터링이 완료되었습니다!")
+    st.dataframe(df[['cluster']].value_counts().reset_index().rename(columns={0: '개수'}))
+
     numeric_cols = df.select_dtypes(include='number').columns.drop('cluster')
 
     for i in range(6):  # 클러스터 0 ~ 5
