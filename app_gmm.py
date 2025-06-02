@@ -586,28 +586,34 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             closest_cluster = result_df.loc[result_df['유사도 비율 (%)'].idxmax(), '클러스터']
             st.markdown(f"**▶ 유사도가 가장 높은 클러스터: {closest_cluster}번**")
 
-            cluster_df = df[df['cluster'] == closest_cluster]
-            cluster_scaled = df_scaled.iloc[df['cluster'] == closest_cluster].copy()
+            # 클러스터 해당 행 필터링
+            cluster_df = df[df['cluster'] == closest_cluster].copy()
+            cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
 
-            # 입력값과의 절댓값 차이가 가장 작은 100개 추출
-            cluster_df_sorted = cluster_df.copy()
-            cluster_df_sorted['abs_diff'] = (cluster_df_sorted['jhj_flow_1'] - input_val).abs()
-            closest_100 = cluster_df_sorted.sort_values('abs_diff').iloc[:100]
+            # 입력값 기준으로 가장 가까운 100개
+            closest_100 = cluster_df.nsmallest(100, 'abs_diff')
 
-            # 중심과의 거리 계산 후 상위 10개 추출
-            center_scaled = gmm.means_[closest_cluster].reshape(1, -1)
-            closest_scaled = df_scaled.loc[closest_100.index]
-            dists_to_center = np.linalg.norm(closest_scaled - center_scaled, axis=1)
+            # 중심벡터 계산
+            center_vector = gmm.means_[closest_cluster].reshape(1, -1)
 
-            closest_100 = closest_100.copy()
-            closest_100['center_dist'] = dists_to_center
-            closest_10 = closest_100.sort_values('center_dist').iloc[:10]
+            # df_scaled에서 closest_100 인덱스만 추출
+            scaled_subset = df_scaled.loc[closest_100.index]
 
-            # 사용자가 대표 시점을 선택하도록 selectbox 제공
+            # 중심과 거리 계산
+            from sklearn.metrics import pairwise_distances
+            distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
+            closest_100['dist_to_center'] = distances_to_center
+
+            # 중심에 가까운 순서로 상위 10개 추출
+            closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
+
+            # 대표 시점 선택
             selected_time = st.selectbox("대표 시점을 선택하세요:", options=closest_10.index.astype(str))
-            selected_row = df.loc[pd.to_datetime(selected_time)]
-            st.session_state.rep_row = selected_row
-            st.session_state.rep_time = pd.to_datetime(selected_time)
 
-            st.markdown(f"**선택된 대표 시점: {selected_time}**")
-            st.dataframe(selected_row.to_frame(name='Value'))
+            if selected_time:
+                selected_row = df.loc[pd.to_datetime(selected_time)]
+                st.session_state.rep_row = selected_row
+                st.session_state.rep_time = pd.to_datetime(selected_time)
+
+                st.markdown(f"**선택된 대표 시점: {selected_time}**")
+                st.dataframe(selected_row.to_frame(name='Value'))
