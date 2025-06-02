@@ -559,3 +559,31 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
         st.markdown("### 클러스터별 유사도 추정 (중위값 기준)")
         st.dataframe(result_df)
+
+        st.subheader("📊 클러스터별 jhj_flow_1 분포 히스토그램 (입력값 기준)")
+
+        # 클러스터 목록
+        clusters = sorted(df['cluster'].unique())
+        n_clusters = len(clusters)
+
+        # 서브플롯 설정
+        fig, axes = plt.subplots(nrows=(n_clusters + 1) // 2, ncols=2, figsize=(12, 8))
+        axes = axes.flatten()
+
+        # 히스토그램 그리기
+        for i, cluster in enumerate(clusters):
+            ax = axes[i]
+            cluster_data = df[df['cluster'] == cluster]['jhj_flow_1']
+            ax.hist(cluster_data, bins=30, color='skyblue', edgecolor='gray', alpha=0.7)
+            ax.axvline(input_val, color='red', linestyle='--', label='입력값')
+            ax.set_title(f"Cluster {cluster}")
+            ax.set_xlabel("jhj_flow_1")
+            ax.set_ylabel("빈도")
+            ax.legend()
+
+        # 남는 subplot 제거
+        for j in range(i + 1, len(axes)):
+            fig.delaxes(axes[j])
+
+        plt.tight_layout()
+        st.pyplot(fig)
