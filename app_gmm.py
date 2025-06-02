@@ -575,7 +575,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             ax = axes[i]
             cluster_data = df[df['cluster'] == cluster]['jhj_flow_1']
             ax.hist(cluster_data, bins=30, color='skyblue', edgecolor='gray', alpha=0.7)
-            ax.axvline(input_val, color='red', linestyle='--', label='입력값')
+            ax.axvline(input_val, color='red', linestyle='--', label='Input Value')
             ax.set_title(f"Cluster {cluster}")
             ax.set_xlabel("jhj_flow_1")
             ax.set_ylabel("빈도")
@@ -587,3 +587,27 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
         plt.tight_layout()
         st.pyplot(fig)
+
+    st.subheader("9. 유사 클러스터 내 대표 시점 추천")
+
+    # 1. 가장 유사한 클러스터 선택
+    most_similar_cluster = similarity_ratio.idxmax()
+    cluster_df = df[df['cluster'] == most_similar_cluster].copy()
+
+    # 2. 입력값과 jhj_flow_1 차이로 정렬된 상위 10개 추출
+    cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
+    closest_10 = cluster_df.nsmallest(10, 'abs_diff')
+
+    # 3. 클러스터 중심 좌표 추출
+    center_vector = gmm.means_[most_similar_cluster]
+
+    # 4. 이 10개 샘플 중 중심과 가장 가까운 행 찾기
+    closest_scaled = df_scaled[closest_10.index]
+    center_vector_reshaped = center_vector.reshape(1, -1)
+
+    from sklearn.metrics import pairwise_distances
+    distances = pairwise_distances(closest_scaled, center_vector_reshaped)
+    best_idx = closest_10.index[distances.argmin()]
+
+    st.markdown(f"### 🔍 추천 대표 시점 (입력값 기반): {best_idx}")
+    st.dataframe(df.loc[[best_idx]].T)
