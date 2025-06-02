@@ -35,11 +35,26 @@ def load_and_process():
     df = pd.read_csv('./pip_dataset_pro.csv', index_col='date_time', parse_dates=True)
     df.drop(['thj_vv_open_3'], axis=1, inplace=True)
     scaler = StandardScaler()
-    df_scaled = pd.DataFrame(
-        scaler.fit_transform(df),
-        columns=df.columns,
-        index=df.index
-    )
+
+
+    # NaN 확인
+    nan_counts = df.isna().sum()
+    st.subheader("🔍 NaN 개수 (컬럼별)")
+    st.write(nan_counts[nan_counts > 0])  # NaN이 있는 컬럼만 출력
+
+    # inf 확인
+    inf_counts = np.isinf(df).sum()
+    st.subheader("🔍 무한대 값 (inf) 개수 (컬럼별)")
+    st.write(inf_counts[inf_counts > 0])  # inf가 있는 컬럼만 출력
+
+
+
+    df_scaled = df.copy()
+    # df_scaled = pd.DataFrame(
+    #     scaler.fit_transform(df),
+    #     columns=df.columns,
+    #     index=df.index
+    # )
     return df, df_scaled
     # return df, pd.DataFrame(df_scaled, columns=df.columns)
 
