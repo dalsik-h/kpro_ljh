@@ -603,31 +603,27 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             # 중심벡터 계산
             center_vector = gmm.means_[closest_cluster].reshape(1, -1)
 
-            st.write(closest_100)
-            st.write(df_scaled)
-
             # df_scaled에서 closest_100 인덱스만 추출
             subset_index = closest_100.index.intersection(df_scaled.index)
-            # st.write(df.loc[subset_index])
-            # scaled_subset = df_scaled.loc[subset_index]
+            scaled_subset = df_scaled.loc[subset_index]
 
-            # # 중심과 거리 계산
-            # # 필요한 컬럼 순서를 확실히 맞춰서 추출
-            # cols = df_scaled.columns
-            # center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
-            # distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
-            # closest_100['dist_to_center'] = distances_to_center
+            # 중심과 거리 계산
+            # 필요한 컬럼 순서를 확실히 맞춰서 추출
+            cols = df_scaled.columns
+            center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
+            distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
+            closest_100['dist_to_center'] = distances_to_center
 
-            # # 중심에 가까운 순서로 상위 10개 추출
-            # closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
+            # 중심에 가까운 순서로 상위 10개 추출
+            closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
 
-            # # 대표 시점 선택
-            # selected_time = st.selectbox("대표 시점을 선택하세요:", options=closest_10.index.astype(str))
+            # 대표 시점 선택
+            selected_time = st.selectbox("대표 시점을 선택하세요:", options=closest_10.index.astype(str))
 
-            # if selected_time:
-            #     selected_row = df.loc[pd.to_datetime(selected_time)]
-            #     st.session_state.rep_row = selected_row
-            #     st.session_state.rep_time = pd.to_datetime(selected_time)
+            if selected_time:
+                selected_row = df.loc[pd.to_datetime(selected_time)]
+                st.session_state.rep_row = selected_row
+                st.session_state.rep_time = pd.to_datetime(selected_time)
 
-            #     st.markdown(f"**선택된 대표 시점: {selected_time}**")
-            #     st.dataframe(selected_row.to_frame(name='Value'))
+                st.markdown(f"**선택된 대표 시점: {selected_time}**")
+                st.dataframe(selected_row.to_frame(name='Value'))
