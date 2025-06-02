@@ -570,7 +570,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             ax.axvline(input_val, color='red', linestyle='--', label='Input Value')
             ax.set_title(f"Cluster {cluster}")
             ax.set_xlabel("jhj_flow_1")
-            ax.set_ylabel("빈도")
+            ax.set_ylabel("Count")
             ax.legend()
 
         # 남는 subplot 제거
@@ -590,16 +590,16 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             # 클러스터 해당 행 필터링
             cluster_df = df[df['cluster'] == closest_cluster].copy()
             cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
-            st.write(cluster_df)
 
-            # # 입력값 기준으로 가장 가까운 100개
-            # closest_100 = cluster_df.nsmallest(100, 'abs_diff')
+            # 입력값 기준으로 가장 가까운 100개
+            closest_100 = cluster_df.nsmallest(100, 'abs_diff')
 
-            # # 중심벡터 계산
-            # center_vector = gmm.means_[closest_cluster].reshape(1, -1)
+            # 중심벡터 계산
+            center_vector = gmm.means_[closest_cluster].reshape(1, -1)
 
-            # # df_scaled에서 closest_100 인덱스만 추출
-            # subset_index = closest_100.index.intersection(df_scaled.index)
+            # df_scaled에서 closest_100 인덱스만 추출
+            subset_index = closest_100.index.intersection(df_scaled.index)
+            st.write(df.loc[subset_index])
             # scaled_subset = df_scaled.loc[subset_index]
 
             # # 중심과 거리 계산
