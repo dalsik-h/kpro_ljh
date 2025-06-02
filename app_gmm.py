@@ -601,13 +601,16 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
     # 3. 클러스터 중심 좌표 추출
     center_vector = gmm.means_[most_similar_cluster]
 
-    # 4. 이 10개 샘플 중 중심과 가장 가까운 행 찾기
-    closest_scaled = df_scaled[closest_10.index]
-    center_vector_reshaped = center_vector.reshape(1, -1)
+    # 🔧 4. closest_10 인덱스를 위치로 변환
+    closest_10_indices = df.index.get_indexer(closest_10.index)
+    closest_scaled = df_scaled.iloc[closest_10_indices]
 
+    # 5. 중심에서 가장 가까운 샘플 인덱스 추출
     from sklearn.metrics import pairwise_distances
+    center_vector_reshaped = center_vector.reshape(1, -1)
     distances = pairwise_distances(closest_scaled, center_vector_reshaped)
     best_idx = closest_10.index[distances.argmin()]
 
+    # 6. 출력
     st.markdown(f"### 🔍 추천 대표 시점 (입력값 기반): {best_idx}")
     st.dataframe(df.loc[[best_idx]].T)
