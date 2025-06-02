@@ -35,7 +35,10 @@ def load_and_process():
     df = pd.read_csv('./pip_dataset_pro.csv', index_col='date_time', parse_dates=True)
     df.drop(['thj_vv_open_3'], axis=1, inplace=True)
     scaler = StandardScaler()
-    df_scaled = scaler.fit_transform(df)
+    df_scaled = pd.DataFrame(
+        scaler.fit_transform(df),
+        index=df.index
+    )
     return df, pd.DataFrame(df_scaled, columns=df.columns)
 
 st.subheader("1. 데이터 불러오기")
