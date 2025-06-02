@@ -523,3 +523,35 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         #     )
 
         st.pyplot(fig)
+
+    st.subheader("8. jhj_flow_1 단일 입력 → 클러스터 소속 확률 계산")
+
+    if 'gmm' in st.session_state and 'df' in st.session_state:
+        df = st.session_state.df
+        gmm = st.session_state.gmm
+
+        # 이미 drop된 상태의 컬럼 목록 (df_scaled 기준)
+        feature_cols = df.columns.drop('cluster') if 'cluster' in df.columns else df.columns
+
+        # jhj_flow_1 입력 받기
+        input_val = st.number_input("jhj_flow_1 값을 입력하세요 (예: 7000)", min_value=0.0, value=6000.0, step=100.0)
+
+        # 평균값 벡터 생성 → jhj_flow_1만 입력값으로 대체
+        input_vector = df[feature_cols].mean()
+        input_vector['jhj_flow_1'] = input_val
+
+        # 스케일링
+        scaler = StandardScaler()
+        df_scaled = scaler.fit_transform(df[feature_cols])
+        input_scaled = scaler.transform([input_vector])
+
+        # GMM 확률 예측
+        probs = gmm.predict_proba(input_scaled)[0]
+
+        # 결과 출력
+        st.markdown("### 📊 입력값 기반 클러스터 확률")
+        prob_df = pd.DataFrame({
+            '클러스터': [f'Cluster {i}' for i in range(len(probs))],
+            '소속 확률 (%)': (probs * 100).round(2)
+        })
+        st.dataframe(prob_df)
