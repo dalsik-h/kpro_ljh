@@ -519,30 +519,17 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
     
         )
-
-        # for i, (label, value) in enumerate(stats.items()):
-        #     y = base_y + (i + 1) * line_height
-        #     text = f"{label}: {value}"
-        #     ax.add_patch(patches.Rectangle(
-        #         (base_x, y - 15), max_width, box_height,
-        #         linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
-        #     ))
-        #     ax.text(
-        #         base_x + 5, y, text,
-        #         fontsize=5, color='black', verticalalignment='top'
-        #     )
-
         st.pyplot(fig)
 
-    # 8. jhj_flow_1 단일 입력 → 클러스터 소속 확률 계산
-    st.subheader("8. jhj_flow_1 단일 입력 → 클러스터 소속 확률 계산")
+    # 8. ngt_flow_5 단일 입력 → 클러스터 소속 확률 계산
+    st.subheader("8. 남계터널 출구부 유량 단일 입력 → 클러스터 소속 확률 계산")
 
     if 'df' in st.session_state and 'gmm' in st.session_state:
         df = st.session_state.df
 
-        input_val = st.number_input("jhj_flow_1 값을 입력하세요 (예: 7000)", min_value=0.0, value=6000.0, step=100.0)
+        input_val = st.number_input("ngt_flow_5 값을 입력하세요 (예: 7000)", min_value=0.0, value=6000.0, step=100.0)
 
-        cluster_medians = df.groupby('cluster')['jhj_flow_1'].median()
+        cluster_medians = df.groupby('cluster')['ngt_flow_5'].median()
         distances = (cluster_medians - input_val).abs()
         epsilon = 1e-5
         similarity = 1 / (distances + epsilon)
@@ -550,7 +537,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
         result_df = pd.DataFrame({
             '클러스터': cluster_medians.index,
-            'jhj_flow_1 중위값': cluster_medians.values.round(2),
+            'ngt_flow_5 중위값': cluster_medians.values.round(2),
             '입력값과 거리': distances.values.round(2),
             '유사도 비율 (%)': similarity_ratio.values.round(2)
         })
@@ -558,7 +545,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         st.markdown("### 클러스터별 유사도 추정 (중위값 기준)")
         st.dataframe(result_df)
 
-        st.subheader("클러스터별 jhj_flow_1 분포 히스토그램 (입력값 기준)")
+        st.subheader("클러스터별 ngt_flow_5 분포 히스토그램 (입력값 기준)")
 
         # 클러스터 목록
         clusters = sorted(df['cluster'].unique())
@@ -571,11 +558,11 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         # 히스토그램 그리기
         for i, cluster in enumerate(clusters):
             ax = axes[i]
-            cluster_data = df[df['cluster'] == cluster]['jhj_flow_1']
+            cluster_data = df[df['cluster'] == cluster]['ngt_flow_5']
             ax.hist(cluster_data, bins=30, color='skyblue', edgecolor='gray', alpha=0.7)
             ax.axvline(input_val, color='red', linestyle='--', label='Input Value')
             ax.set_title(f"Cluster {cluster}")
-            ax.set_xlabel("jhj_flow_1")
+            ax.set_xlabel("ngt_flow_5")
             ax.set_ylabel("Count")
             ax.legend()
 
@@ -595,7 +582,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
             # 클러스터 해당 행 필터링
             cluster_df = df[df['cluster'] == closest_cluster].copy()
-            cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
+            cluster_df['abs_diff'] = (cluster_df['ngt_flow_5'] - input_val).abs()
 
             # 입력값 기준으로 가장 가까운 100개
             closest_100 = cluster_df.nsmallest(100, 'abs_diff')
@@ -630,7 +617,6 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
                         selected_row = df.loc[i]
                         st.session_state.rep_row = selected_row
                         st.session_state.rep_time = i
-                        st.success(f"시점 {i} 이(가) 선택되었습니다.")
                         break
 
             # 최종 선택된 값을 관망도상에 표시하는 코드
