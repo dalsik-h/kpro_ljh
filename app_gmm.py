@@ -597,9 +597,12 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             # 중심벡터 계산
             center_vector = gmm.means_[closest_cluster].reshape(1, -1)
 
+            st.write(closest_100)
+            st.write(df_scaled)
+
             # df_scaled에서 closest_100 인덱스만 추출
             subset_index = closest_100.index.intersection(df_scaled.index)
-            st.write(df.loc[subset_index])
+            # st.write(df.loc[subset_index])
             # scaled_subset = df_scaled.loc[subset_index]
 
             # # 중심과 거리 계산
