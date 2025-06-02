@@ -617,25 +617,30 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             # 중심에 가까운 순서로 상위 10개 추출
             closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
 
-            # # 대표 시점 선택
-            # selected_time = st.selectbox("대표 시점을 선택하세요:", options=closest_10.index.astype(str))
-
-            # if selected_time:
-            #     selected_row = df.loc[pd.to_datetime(selected_time)]
-            #     st.session_state.rep_row = selected_row
-            #     st.session_state.rep_time = pd.to_datetime(selected_time)
-
-            #     st.markdown(f"**선택된 대표 시점: {selected_time}**")
-            #     st.dataframe(selected_row.to_frame(name='Value'))
             st.subheader("유사 클러스터의 대표 시점 상위 10개")
             st.dataframe(closest_10.drop(columns='abs_diff').round(2))
 
-            # 각 행에 대해 버튼 생성
+            # 버튼 가로 나열
             st.subheader("대표 시점 선택")
-            for i, row in closest_10.iterrows():
-                if st.button(f"✅ {i} 시점 선택"):
-                    selected_row = df.loc[i]
-                    st.session_state.rep_row = selected_row
-                    st.session_state.rep_time = i
-                    st.success(f"시점 {i} 이(가) 선택되었습니다.")
-                    break
+            cols = st.columns(len(closest_10))  # 열 수 = 버튼 수
+
+            for col, (i, row) in zip(cols, closest_10.iterrows()):
+                with col:
+                    st.markdown(
+                        f"""
+                        <style>
+                        .small-button {{
+                            font-size: 10px !important;
+                            padding: 2px 6px;
+                        }}
+                        </style>
+                        <button class="small-button" onclick="window.location.reload(true)">{i} 선택</button>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    if st.button(f"{i} 선택", key=str(i)):
+                        selected_row = df.loc[i]
+                        st.session_state.rep_row = selected_row
+                        st.session_state.rep_time = i
+                        st.success(f"시점 {i} 이(가) 선택되었습니다.")
+                        break
