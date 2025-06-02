@@ -552,11 +552,16 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         st.dataframe(result_df)
 
         st.subheader("📊 클러스터별 jhj_flow_1 분포 히스토그램 (입력값 기준)")
+
+        # 클러스터 목록
         clusters = sorted(df['cluster'].unique())
         n_clusters = len(clusters)
+
+        # 서브플롯 설정
         fig, axes = plt.subplots(nrows=(n_clusters + 1) // 2, ncols=2, figsize=(12, 8))
         axes = axes.flatten()
 
+        # 히스토그램 그리기
         for i, cluster in enumerate(clusters):
             ax = axes[i]
             cluster_data = df[df['cluster'] == cluster]['jhj_flow_1']
@@ -567,35 +572,42 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             ax.set_ylabel("빈도")
             ax.legend()
 
+        # 남는 subplot 제거
         for j in range(i + 1, len(axes)):
             fig.delaxes(axes[j])
 
         plt.tight_layout()
         st.pyplot(fig)
 
-        # ▼▼▼ 추가: 9. 유사 클러스터 내 대표 시점 추천 ▼▼▼
-        with st.expander("9. 유사 클러스터 내 대표 시점 추천 (선택형)"):
-            if st.button("추천 시점 목록 보기"):
-                most_similar_cluster = similarity_ratio.idxmax()
-                cluster_df = df[df['cluster'] == most_similar_cluster].copy()
+        # ====================
+        # 9. 유사 클러스터 내 대표 시점 추천
+        # ====================
+        with st.expander("유사 클러스터 내 대표 시점 추천 보기"):
+            closest_cluster = result_df.loc[result_df['유사도 비율 (%)'].idxmax(), '클러스터']
+            st.markdown(f"**▶ 유사도가 가장 높은 클러스터: {closest_cluster}번**")
 
-                cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
-                closest_10 = cluster_df.nsmallest(100, 'abs_diff')  # 여유롭게 추출 후
+            cluster_df = df[df['cluster'] == closest_cluster]
+            cluster_scaled = df_scaled[df['cluster'] == closest_cluster]
 
-                # 클러스터 중심 벡터 추출 후 거리 계산
-                center_vector = st.session_state.gmm.means_[most_similar_cluster].reshape(1, -1)
-                closest_10_indices = df.index.get_indexer(closest_10.index)
-                closest_scaled = st.session_state.df_scaled.iloc[closest_10_indices]
+            # 입력값과의 절댓값 차이가 가장 작은 100개 추출
+            cluster_df_sorted = cluster_df.copy()
+            cluster_df_sorted['abs_diff'] = (cluster_df_sorted['jhj_flow_1'] - input_val).abs()
+            closest_100 = cluster_df_sorted.sort_values('abs_diff').iloc[:100]
 
-                from sklearn.metrics import pairwise_distances
-                distances_to_center = pairwise_distances(closest_scaled, center_vector).flatten()
-                closest_10['dist_to_center'] = distances_to_center
-                closest_10_sorted = closest_10.nsmallest(10, 'dist_to_center')
+            # 중심과의 거리 계산 후 상위 10개 추출
+            center_scaled = gmm.means_[closest_cluster].reshape(1, -1)
+            closest_scaled = df_scaled[closest_100.index]
+            dists_to_center = np.linalg.norm(closest_scaled - center_scaled, axis=1)
 
-                # 사용자 선택
-                selected_time = st.selectbox("📌 시점 선택 (중심과 가까운 순):", closest_10_sorted.index.astype(str))
+            closest_100 = closest_100.copy()
+            closest_100['center_dist'] = dists_to_center
+            closest_10 = closest_100.sort_values('center_dist').iloc[:10]
 
-                if selected_time:
-                    selected_row = df.loc[selected_time]
-                    st.markdown(f"### 선택된 대표 시점: {selected_time}")
-                    st.dataframe(selected_row.to_frame(name='Value'))
+            # 사용자가 대표 시점을 선택하도록 selectbox 제공
+            selected_time = st.selectbox("대표 시점을 선택하세요:", options=closest_10.index.astype(str))
+            selected_row = df.loc[pd.to_datetime(selected_time)]
+            st.session_state.rep_row = selected_row
+            st.session_state.rep_time = pd.to_datetime(selected_time)
+
+            st.markdown(f"**선택된 대표 시점: {selected_time}**")
+            st.dataframe(selected_row.to_frame(name='Value'))
