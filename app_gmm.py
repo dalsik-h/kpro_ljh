@@ -13,6 +13,7 @@ from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bo
 import matplotlib.font_manager as fm
 import matplotlib.patches as patches
 from sklearn.metrics import pairwise_distances_argmin_min
+from sklearn.metrics import pairwise_distances
 import os
 
 # 1. 경로 지정
@@ -601,7 +602,9 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             scaled_subset = df_scaled.loc[subset_index]
 
             # 중심과 거리 계산
-            from sklearn.metrics import pairwise_distances
+            # 필요한 컬럼 순서를 확실히 맞춰서 추출
+            cols = df_scaled.columns
+            center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
             distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
             closest_100['dist_to_center'] = distances_to_center
 
