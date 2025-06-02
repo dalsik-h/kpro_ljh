@@ -632,3 +632,313 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
                         st.session_state.rep_time = i
                         st.success(f"시점 {i} 이(가) 선택되었습니다.")
                         break
+
+            # 최종 선택된 값을 관망도상에 표시하는 코드
+            if 'rep_row' in st.session_state:
+                rep_row = st.session_state.rep_row
+                rep_time = st.session_state.rep_time
+
+                image = Image.open("./back_img2.jpg")
+
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ax.imshow(image)
+                ax.axis('off')
+
+                base_x, base_y = 350, 190
+                line_height = 41
+                max_width = 150
+                box_height = 40
+
+                # 접합정 출구부 유량
+                col_a = "jhj_flow_1"
+                col_a_title = "접합정 출구 유량"
+                ax.add_patch(patches.Rectangle(
+                    (base_x, base_y - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x + 5, base_y, col_a_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y = base_y + 1 * line_height
+                text = f"{rep_row[col_a].round(2)}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x, y - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x + 5, y, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 통합제수변실 유량
+                col_b = "tjv_flow_2"
+                col_b_title = "통합제수변실 유량"
+                base_x2, base_y2 = 1070, 200
+                ax.add_patch(patches.Rectangle(
+                    (base_x2, base_y2 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x2 + 5, base_y2, col_b_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y2 = base_y2 + 1 * line_height
+                text = f"{rep_row[col_b]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x2, y2 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x2 + 5, y2, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 포항시(분) 유량
+                col_c = "phb_flow_3"
+                col_c_title = "포항시(분) 유량"
+                base_x3, base_y3 = 1400, 100
+                ax.add_patch(patches.Rectangle(
+                    (base_x3, base_y3 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x3 + 5, base_y3, col_c_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y3 = base_y3 + 1 * line_height
+                text = f"{rep_row[col_c]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x3, y3 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x3 + 5, y3, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 학야(정) 유입유량
+                col_d = "hyj_flow_4"
+                col_d_title = "학야(정) 유입유량"
+                base_x4, base_y4 = 1225, 550
+                ax.add_patch(patches.Rectangle(
+                    (base_x4, base_y4 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x4 + 5, base_y4, col_d_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y4 = base_y4 + 1 * line_height
+                text = f"{rep_row[col_d]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x4, y4 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x4 + 5, y4, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 남계터널출구 유량
+                col_e = "ngt_flow_5"
+                col_e_title = "남계터널 출구유량"
+                base_x5, base_y5 = 600, 340
+                ax.add_patch(patches.Rectangle(
+                    (base_x5, base_y5 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x5 + 5, base_y5, col_e_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y5 = base_y5 + 1 * line_height
+                text = f"{rep_row[col_e]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x5, y5 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x5 + 5, y5, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 남계터널출구 신관 유량
+                col_f = "ngt_sub_flow_6"
+                col_f_title = "남계터널 신관유량"
+                base_x6, base_y6 = 620, 510
+                ax.add_patch(patches.Rectangle(
+                    (base_x6, base_y6 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x6 + 5, base_y6, col_f_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y6 = base_y6 + 1 * line_height
+                text = f"{rep_row[col_f]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x6, y6 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x6 + 5, y6, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 안계댐 유입 유량
+                col_g = "agd_flow_7"
+                col_g_title = "안계댐 유입유량"
+                base_x7, base_y7 = 1580, 230
+                ax.add_patch(patches.Rectangle(
+                    (base_x7, base_y7 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='red', facecolor='lightpink', alpha=0.9
+                ))
+                ax.text(
+                    base_x7 + 5, base_y7, col_g_title,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                y7 = base_y7 + 1 * line_height
+                text = f"{rep_row[col_g]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x7, y7 - 15), max_width, box_height,
+                    linewidth=1, edgecolor='black', facecolor='white', alpha=0.9
+                ))
+                ax.text(
+                    base_x7 + 5, y7, text,
+                    fontsize=5, color='black', verticalalignment='top'
+                )
+
+                # 통합제수변실 밸브 #1 개도
+                col_h = "thj_vv_open_1"
+                base_x8, base_y8 = 1010, 200
+                text = f"{rep_row[col_h]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x8, base_y8 - 15), 50, box_height,
+                    linewidth=1, edgecolor='black', facecolor='lightgray', alpha=0.9
+                ))
+                ax.text(
+                    base_x8 + 5, base_y8, text,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 통합제수변실 밸브 #2 개도
+                col_i = "thj_vv_open_2"
+                base_x9, base_y9 = 970, 290
+                text = f"{rep_row[col_i]}"
+                ax.add_patch(patches.Rectangle(
+                    (base_x9, base_y9 - 15), 50, box_height,
+                    linewidth=1, edgecolor='black', facecolor='lightgray', alpha=0.9
+                ))
+                ax.text(
+                    base_x9 + 5, base_y9, text,
+                    fontsize=5, weight='bold', color='black', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 통합제수변실 #1 압력
+                col_j = "thj_pre_1"
+                base_x10, base_y10 = 1100, 150
+                text = f"{rep_row[col_j]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x10, base_y10 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x10 + 5, base_y10, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 포항시 분기 압력
+                col_k = "phb_pre_2"
+                base_x11, base_y11 = 1400, 55
+                text = f"{rep_row[col_k]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x11, base_y11 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x11 + 5, base_y11, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 학야(정) 유입 압력
+                col_l = "hyj_pre_3"
+                base_x12, base_y12 = 1100, 550
+                text = f"{rep_row[col_l]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x12, base_y12 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x12 + 5, base_y12, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 통합제수변실 #2 압력
+                col_m = "thj_pre_4"
+                base_x13, base_y13 = 1040, 400
+                text = f"{rep_row[col_m]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x13, base_y13 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x13 + 5, base_y13, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 안계댐 유입 압력
+                col_n = "agd_pre_5"
+                base_x14, base_y14 = 1580, 320
+                text = f"{rep_row[col_n]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x14, base_y14 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x14 + 5, base_y14, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 남계터널출구 신관 압력
+                col_o = "ngt_sub_pre_6"
+                base_x15, base_y15 = 780, 540
+                text = f"{rep_row[col_o]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x15, base_y15 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x15 + 5, base_y15, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+
+                # 안계댐 유입 신관 압력
+                col_p = "agd_new_pre_7"
+                base_x16, base_y16 = 1750, 340
+                text = f"{rep_row[col_p]}kgf/cm²"
+                ax.add_patch(patches.Rectangle(
+                    (base_x16, base_y16 - 15), 115, box_height,
+                    linewidth=1, edgecolor='blue', facecolor='skyblue', alpha=0.9
+                ))
+                ax.text(
+                    base_x16 + 5, base_y16, text,
+                    fontsize=5, weight='bold', color='blue', verticalalignment='top', fontproperties=font_prop
+            
+                )
+                st.pyplot(fig)
