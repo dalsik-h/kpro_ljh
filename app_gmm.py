@@ -587,7 +587,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             st.markdown(f"**▶ 유사도가 가장 높은 클러스터: {closest_cluster}번**")
 
             cluster_df = df[df['cluster'] == closest_cluster]
-            cluster_scaled = df_scaled[df['cluster'] == closest_cluster]
+            cluster_scaled = df_scaled.loc[df.index[df['cluster'] == closest_cluster]]
 
             # 입력값과의 절댓값 차이가 가장 작은 100개 추출
             cluster_df_sorted = cluster_df.copy()
@@ -596,7 +596,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
             # 중심과의 거리 계산 후 상위 10개 추출
             center_scaled = gmm.means_[closest_cluster].reshape(1, -1)
-            closest_scaled = df_scaled[closest_100.index]
+            closest_scaled = df_scaled.loc[closest_100.index]
             dists_to_center = np.linalg.norm(closest_scaled - center_scaled, axis=1)
 
             closest_100 = closest_100.copy()
