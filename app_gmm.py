@@ -587,7 +587,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             st.markdown(f"**▶ 유사도가 가장 높은 클러스터: {closest_cluster}번**")
 
             cluster_df = df[df['cluster'] == closest_cluster]
-            cluster_scaled = df_scaled.loc[df.index[df['cluster'] == closest_cluster]]
+            cluster_scaled = df_scaled[df['cluster'] == closest_cluster].copy()
 
             # 입력값과의 절댓값 차이가 가장 작은 100개 추출
             cluster_df_sorted = cluster_df.copy()
