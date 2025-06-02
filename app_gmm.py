@@ -527,29 +527,20 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
         st.pyplot(fig)
 
+    # 8. jhj_flow_1 단일 입력 → 클러스터 소속 확률 계산
     st.subheader("8. jhj_flow_1 단일 입력 → 클러스터 소속 확률 계산")
 
     if 'df' in st.session_state and 'gmm' in st.session_state:
         df = st.session_state.df
 
-        # 사용자 입력값
         input_val = st.number_input("jhj_flow_1 값을 입력하세요 (예: 7000)", min_value=0.0, value=6000.0, step=100.0)
 
-        # 클러스터별 중위값 추출
         cluster_medians = df.groupby('cluster')['jhj_flow_1'].median()
-
-        # 입력값과 중위값의 거리 계산
         distances = (cluster_medians - input_val).abs()
-
-        # 거리 → 유사도 (작을수록 가까우므로 1 / 거리)
-        # 거리 0인 경우를 대비해 epsilon 더하기
         epsilon = 1e-5
         similarity = 1 / (distances + epsilon)
-
-        # 비율 (%) 환산
         similarity_ratio = similarity / similarity.sum() * 100
 
-        # 출력
         result_df = pd.DataFrame({
             '클러스터': cluster_medians.index,
             'jhj_flow_1 중위값': cluster_medians.values.round(2),
@@ -561,16 +552,11 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
         st.dataframe(result_df)
 
         st.subheader("📊 클러스터별 jhj_flow_1 분포 히스토그램 (입력값 기준)")
-
-        # 클러스터 목록
         clusters = sorted(df['cluster'].unique())
         n_clusters = len(clusters)
-
-        # 서브플롯 설정
         fig, axes = plt.subplots(nrows=(n_clusters + 1) // 2, ncols=2, figsize=(12, 8))
         axes = axes.flatten()
 
-        # 히스토그램 그리기
         for i, cluster in enumerate(clusters):
             ax = axes[i]
             cluster_data = df[df['cluster'] == cluster]['jhj_flow_1']
@@ -581,36 +567,35 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             ax.set_ylabel("빈도")
             ax.legend()
 
-        # 남는 subplot 제거
         for j in range(i + 1, len(axes)):
             fig.delaxes(axes[j])
 
         plt.tight_layout()
         st.pyplot(fig)
 
-    st.subheader("9. 유사 클러스터 내 대표 시점 추천")
+        # ▼▼▼ 추가: 9. 유사 클러스터 내 대표 시점 추천 ▼▼▼
+        with st.expander("9. 유사 클러스터 내 대표 시점 추천 (선택형)"):
+            if st.button("추천 시점 목록 보기"):
+                most_similar_cluster = similarity_ratio.idxmax()
+                cluster_df = df[df['cluster'] == most_similar_cluster].copy()
 
-    # 1. 가장 유사한 클러스터 선택
-    most_similar_cluster = similarity_ratio.idxmax()
-    cluster_df = df[df['cluster'] == most_similar_cluster].copy()
+                cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
+                closest_10 = cluster_df.nsmallest(100, 'abs_diff')  # 여유롭게 추출 후
 
-    # 2. 입력값과 jhj_flow_1 차이로 정렬된 상위 10개 추출
-    cluster_df['abs_diff'] = (cluster_df['jhj_flow_1'] - input_val).abs()
-    closest_10 = cluster_df.nsmallest(10, 'abs_diff')
+                # 클러스터 중심 벡터 추출 후 거리 계산
+                center_vector = st.session_state.gmm.means_[most_similar_cluster].reshape(1, -1)
+                closest_10_indices = df.index.get_indexer(closest_10.index)
+                closest_scaled = st.session_state.df_scaled.iloc[closest_10_indices]
 
-    # 3. 클러스터 중심 좌표 추출
-    center_vector = gmm.means_[most_similar_cluster]
+                from sklearn.metrics import pairwise_distances
+                distances_to_center = pairwise_distances(closest_scaled, center_vector).flatten()
+                closest_10['dist_to_center'] = distances_to_center
+                closest_10_sorted = closest_10.nsmallest(10, 'dist_to_center')
 
-    # 🔧 4. closest_10 인덱스를 위치로 변환
-    closest_10_indices = df.index.get_indexer(closest_10.index)
-    closest_scaled = df_scaled.iloc[closest_10_indices]
+                # 사용자 선택
+                selected_time = st.selectbox("📌 시점 선택 (중심과 가까운 순):", closest_10_sorted.index.astype(str))
 
-    # 5. 중심에서 가장 가까운 샘플 인덱스 추출
-    from sklearn.metrics import pairwise_distances
-    center_vector_reshaped = center_vector.reshape(1, -1)
-    distances = pairwise_distances(closest_scaled, center_vector_reshaped)
-    best_idx = closest_10.index[distances.argmin()]
-
-    # 6. 출력
-    st.markdown(f"### 🔍 추천 대표 시점 (입력값 기반): {best_idx}")
-    st.dataframe(df.loc[[best_idx]].T)
+                if selected_time:
+                    selected_row = df.loc[selected_time]
+                    st.markdown(f"### 선택된 대표 시점: {selected_time}")
+                    st.dataframe(selected_row.to_frame(name='Value'))
