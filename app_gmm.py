@@ -597,7 +597,8 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             center_vector = gmm.means_[closest_cluster].reshape(1, -1)
 
             # df_scaled에서 closest_100 인덱스만 추출
-            scaled_subset = df_scaled.loc[closest_100.index]
+            subset_index = closest_100.index.intersection(df_scaled.index)
+            scaled_subset = df_scaled.loc[subset_index]
 
             # 중심과 거리 계산
             from sklearn.metrics import pairwise_distances
