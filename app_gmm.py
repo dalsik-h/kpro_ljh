@@ -37,9 +37,11 @@ def load_and_process():
     scaler = StandardScaler()
     df_scaled = pd.DataFrame(
         scaler.fit_transform(df),
+        columns=df.columns,
         index=df.index
     )
-    return df, pd.DataFrame(df_scaled, columns=df.columns)
+    return df, df_scaled
+    # return df, pd.DataFrame(df_scaled, columns=df.columns)
 
 st.subheader("1. 데이터 불러오기")
 if "df" not in st.session_state:
