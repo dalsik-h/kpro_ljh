@@ -10,10 +10,10 @@ st.set_page_config(layout="wide")
 st.sidebar.markdown("## ✅ 포항권 공업용수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AI분석시스템", unsafe_allow_html=True)
 
 if st.sidebar.button("📈 영천댐 수위 예측  &nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;  안계소수력 발전전력 예측"):
-    selected  = "page1.py"
+    st.session_state.selected  = "page1.py"
 
 if st.sidebar.button("📊 공업용수 관망정보 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;클러스터링"):
-    selected  = "app_gmm.py"
+    st.session_state.selected  = "app_gmm.py"
 
 selected = st.session_state.selected
 
@@ -33,4 +33,4 @@ else:
     if hasattr(module, "run"):
         module.run()
     else:
-        st.error("선택된 파일에 run() 함수가 없습니다.")
+        st.error(f"`{selected}` 파일에는 `run()` 함수가 없습니다.")
