@@ -21,13 +21,6 @@ if selected is None:
     st.markdown("<br><br>", unsafe_allow_html=True)  # 약간의 상단 여백
 
     st.image("title.png", use_container_width=True)
-
-    # 또는 중앙 정렬 CSS 추가
-    st.markdown("""
-    <div style='text-align: center;'>
-        <img src='your_image_path.png' width='400'/>
-    </div>
-    """, unsafe_allow_html=True)
 else:
     # 동적으로 py 파일을 import 후 실행
     spec = importlib.util.spec_from_file_location("page_module", selected)
