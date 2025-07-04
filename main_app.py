@@ -17,8 +17,8 @@ if st.sidebar.button("📊 공업용수 관망정보 &nbsp;&nbsp;&nbsp;&nbsp;&nb
 
 # ------------------- 오른쪽 메인 화면 ---------------------
 if selected is None:
-    # 예시 이미지 표시 (센터 정렬 + 사이즈 조절 가능)
-    st.markdown("<br><br>", unsafe_allow_html=True)  # 약간의 상단 여백
+    # 포항권지사 타이틀 이미지 표시
+    st.markdown("<br>", unsafe_allow_html=True)  # 약간의 상단 여백
 
     st.image("title.png", use_container_width=True)
 else:
