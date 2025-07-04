@@ -613,7 +613,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
             for col, (i, row) in zip(cols, closest_10.iterrows()):
                 with col:
-                    if st.button(f"{i.strftime('%Y-%m-%d %H:%M:%S')} 선택", key=str(i)):
+                    if st.button(f"{i.strftime('%Y-%m-%d %H:%M:%S')} &nbsp;&nbsp;&nbsp;선택", key=str(i)):
                         selected_row = df.loc[i]
                         st.session_state.rep_row = selected_row
                         st.session_state.rep_time = i
