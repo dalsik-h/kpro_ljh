@@ -1,7 +1,8 @@
 import streamlit as st
 import importlib.util
 
-selected = None
+if "selected" not in st.session_state:
+    st.session_state.selected = None
 
 st.set_page_config(layout="wide")
 
