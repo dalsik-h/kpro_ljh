@@ -11,7 +11,7 @@ show_page = None
 if st.sidebar.button("📈 영천댐 수위 / 안계소수력 발전전력 예측"):
     show_page = "page1.py"
 
-if st.sidebar.button("📊 공업용수 &nbsp; 관망정보 \n 클러스터링"):
+if st.sidebar.button("📊 공업용수 &nbsp; 관망정보 &nbsp; 클러스터링"):
     show_page = "app_gmm.py"
 
 # 화면 분할: 좌측 - 제어 / 우측 - 페이지 출력
