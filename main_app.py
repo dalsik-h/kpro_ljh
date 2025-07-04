@@ -5,7 +5,8 @@ st.set_page_config(layout="wide")
 st.title("🔘 버튼 클릭에 따라 우측 화면이 바뀌는 앱")
 
 # 좌측 사이드바 버튼
-st.sidebar.title("✅ 포항권 공업용수 \n  AI분석시스템")
+st.sidebar.title("✅ 포항권 공업용수")
+st.sidebar.title("     AI분석시스템")
 show_page = None
 
 if st.sidebar.button("📈 영천댐 수위/안계소수력 \n 발전전력 예측"):
