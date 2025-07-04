@@ -1,6 +1,8 @@
 import streamlit as st
 import importlib.util
 
+selected = None
+
 st.set_page_config(layout="wide")
 
 # 좌측 사이드바 버튼
