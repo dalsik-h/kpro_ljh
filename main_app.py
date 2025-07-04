@@ -32,5 +32,3 @@ else:
     # 반드시 run() 함수가 있어야 함
     if hasattr(module, "run"):
         module.run()
-    else:
-        st.error(f"`{selected}` 파일에는 `run()` 함수가 없습니다.")
