@@ -15,6 +15,8 @@ if st.sidebar.button("📈 영천댐 수위 예측  &nbsp;&nbsp;&nbsp;→&nbsp;&
 if st.sidebar.button("📊 공업용수 관망정보 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;클러스터링"):
     selected  = "app_gmm.py"
 
+selected = st.session_state.selected
+
 # ------------------- 오른쪽 메인 화면 ---------------------
 if selected is None:
     # 포항권지사 타이틀 이미지 표시
