@@ -20,7 +20,7 @@ if selected is None:
     # 예시 이미지 표시 (센터 정렬 + 사이즈 조절 가능)
     st.markdown("<br><br>", unsafe_allow_html=True)  # 약간의 상단 여백
 
-    st.image("title.png", use_column_width=False, width=400, caption="")  # 이미지 사이즈/경로 조절
+    st.image("your_image.png", use_container_width=True)
 
     # 또는 중앙 정렬 CSS 추가
     st.markdown("""
