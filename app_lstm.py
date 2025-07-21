@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import joblib
-from keras.models import load_model
+# from keras.models import load_model
+from tensorflow.keras.models import load_model
 from scipy.signal import savgol_filter
 from datetime import timedelta
 
@@ -26,7 +27,8 @@ if uploaded_future and uploaded_history:
     # =============================
     # 모델 및 스케일러 불러오기
     # =============================
-    model = load_model("recursive_lstm_model.keras", compile=False)
+    # model = load_model("recursive_lstm_model.keras", compile=False)
+    model = load_model("recursive_lstm_model.h5")
     model.compile(optimizer='adam', loss='mae')
     scaler_input = joblib.load('scaler_input.pkl')
     scaler_target = joblib.load('scaler_target.pkl')
