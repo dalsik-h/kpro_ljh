@@ -1,7 +1,7 @@
 import streamlit as st
 import importlib.util
 
-if "selected" not in st.session_state:
+if "selected" not in st.session_state or st.session_state.selected == "page1.py":
     st.session_state.selected = None
 
 st.set_page_config(layout="wide")
@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 st.sidebar.markdown("## ✅ 포항권 공업용수<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AI분석시스템", unsafe_allow_html=True)
 
 if st.sidebar.button("📈 영천댐 수위 예측  &nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;  안계소수력 발전전력 예측"):
-    st.session_state.selected  = "page1.py"
+    st.session_state.selected  = "app_lstm.py"
 
 if st.sidebar.button("📊 공업용수 관망정보 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;클러스터링"):
     st.session_state.selected  = "app_gmm.py"
