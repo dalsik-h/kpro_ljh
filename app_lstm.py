@@ -26,7 +26,7 @@ if uploaded_future and uploaded_history:
     # =============================
     # 모델 및 스케일러 불러오기
     # =============================
-    model = load_model('recursive_lstm_model.h5', compile=False)
+    model = load_model("recursive_lstm_model.keras", compile=False)
     model.compile(optimizer='adam', loss='mae')
     scaler_input = joblib.load('scaler_input.pkl')
     scaler_target = joblib.load('scaler_target.pkl')
