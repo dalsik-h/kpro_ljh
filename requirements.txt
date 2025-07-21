@@ -5,3 +5,4 @@ matplotlib
 seaborn
 scikit-learn
 pillow
+tensorflow==2.13.0
