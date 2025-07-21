@@ -6,5 +6,6 @@ seaborn
 scikit-learn
 pillow
 keras==3.9.2
+tensorflow==2.15.0
 scipy
 joblib
