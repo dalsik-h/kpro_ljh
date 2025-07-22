@@ -139,6 +139,12 @@ if uploaded_future and uploaded_history:
     forecast_df.set_index('date_time', inplace=True)
 
     st.success("예측 완료!")
+
+        # 👉 예측 결과 표로 먼저 출력
+    st.subheader("📋 예측 결과 표")
+    st.dataframe(forecast_df)  # 또는 st.table() 사용 가능
+
+
     st.line_chart(forecast_df)
 
     # csv = forecast_df.to_csv().encode("utf-8-sig")
