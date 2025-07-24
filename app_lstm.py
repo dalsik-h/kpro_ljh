@@ -24,6 +24,11 @@ if uploaded_future and uploaded_history:
     history_df = pd.read_csv(uploaded_history, parse_dates=['date_time'], index_col='date_time')
     st.success("CSV 파일 업로드 완료!")
 
+    raw_future.index = pd.to_datetime(raw_future.index)
+    history_df.index = pd.to_datetime(history_df.index)
+    raw_future.sort_index(inplace=True)
+    history_df.sort_index(inplace=True)
+
     # =============================
     # 모델 및 스케일러 불러오기
     # =============================
