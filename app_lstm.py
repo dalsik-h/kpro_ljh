@@ -154,3 +154,6 @@ if uploaded_future and uploaded_history:
 
     # csv = forecast_df.to_csv().encode("utf-8-sig")
     # st.download_button("예측 결과 CSV 다운로드", csv, "predicted_ycd_level.csv", "text/csv")
+
+st.write("예측 결과 길이:", len(forecast_preds))
+st.write("예측 결과 일부:", forecast_preds[:5])
