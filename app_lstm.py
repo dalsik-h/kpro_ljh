@@ -69,12 +69,34 @@ if uploaded_future and uploaded_history:
         df = prepare_initial_input(future_df, is_future=True)
         df = df[scaler_input.feature_names_in_]
         hdf = prepare_initial_input(history_df, is_future=False)
+        for t in range(24, len(hdf)):
+            current_time = hdf.index[t]
+
+            for lag in [1, 2, 3, 4, 5, 6, 24]:
+                lag_time = current_time - pd.Timedelta(hours=lag)
+                if lag_time in hdf.index:
+                    val = hdf.at[lag_time, 'ycd_level']
+                    hdf.at[current_time, f'ycd_level_lag{lag}'] = val
+
+            past_flow = hdf.loc[current_time - pd.Timedelta(hours=11):current_time, 'ycd_gflow_out1']
+            past_flow2 = hdf.loc[current_time - pd.Timedelta(hours=12):current_time - pd.Timedelta(hours=1), 'ycd_gflow_out1']
+            if len(past_flow) == 12:
+                mean1 = past_flow.mean()
+                mean2 = past_flow2.mean()
+                hdf.at[current_time, 'flow_out1_rolling_12h'] = mean1
+                hdf.at[current_time, 'flow_out1_rolling_12h_diff'] = mean1 - mean2
+
+            past_rain = hdf.loc[current_time - pd.Timedelta(hours=11):current_time, 'rain_total']
+            if len(past_rain) == 12:
+                hdf.at[current_time, 'rain_count_12h'] = (past_rain > 0).sum()
+
         full_data = pd.concat([hdf, df], axis=0)
         preds = []
         forecast_index = []
 
         for t in range(len(df)):
             current_time = df.index[t]
+
             for lag in [1,2,3,4,5,6,24]:
                 lag_time = current_time - pd.Timedelta(hours=lag)
                 if lag_time in full_data.index:
@@ -105,14 +127,6 @@ if uploaded_future and uploaded_history:
                 continue
             sequence_scaled = scaler_input.transform(sequence)
             sequence_scaled = sequence_scaled.reshape(1, lookback, -1)
-
-            if np.isnan(sequence_scaled).any():
-                st.error(f"❌ sequence_scaled에 NaN 존재! 예측 중단 - 시점: {current_time}")
-                st.stop()
-            else:
-                st.write(f"[OK] 입력 시퀀스 정상 at {current_time}")
-
-
             pred_scaled = model.predict(sequence_scaled, verbose=0)
             pred = scaler_target.inverse_transform(pred_scaled)[0][0]
             preds.append(pred)
