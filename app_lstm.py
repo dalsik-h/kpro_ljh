@@ -118,6 +118,9 @@ if uploaded_future and uploaded_history:
     # =============================
     forecast_index, forecast_preds = recursive_forecast(raw_future, history_df, model, scaler_input, scaler_target)
 
+    st.write("예측 결과 길이:", len(forecast_preds))
+    st.write("예측 결과 일부:", forecast_preds[:5])
+    
     # Bias 보정
     initial_level = history_df['ycd_level'].iloc[-1]
     predicted_start = forecast_preds[0]
@@ -154,6 +157,3 @@ if uploaded_future and uploaded_history:
 
     # csv = forecast_df.to_csv().encode("utf-8-sig")
     # st.download_button("예측 결과 CSV 다운로드", csv, "predicted_ycd_level.csv", "text/csv")
-
-st.write("예측 결과 길이:", len(forecast_preds))
-st.write("예측 결과 일부:", forecast_preds[:5])
