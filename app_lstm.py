@@ -105,10 +105,16 @@ if uploaded_future and uploaded_history:
                 continue
             sequence_scaled = scaler_input.transform(sequence)
             sequence_scaled = sequence_scaled.reshape(1, lookback, -1)
+
+            if np.isnan(sequence_scaled).any():
+                st.error(f"❌ sequence_scaled에 NaN 존재! 예측 중단 - 시점: {current_time}")
+                st.stop()
+            else:
+                st.write(f"[OK] 입력 시퀀스 정상 at {current_time}")
+
+
             pred_scaled = model.predict(sequence_scaled, verbose=0)
-            st.write("[DEBUG] pred_scaled:", pred_scaled)
             pred = scaler_target.inverse_transform(pred_scaled)[0][0]
-            st.write("[DEBUG] pred (inverse transform):", pred)
             preds.append(pred)
             forecast_index.append(current_time)
             df.at[current_time, 'ycd_level'] = pred
