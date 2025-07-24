@@ -106,7 +106,9 @@ if uploaded_future and uploaded_history:
             sequence_scaled = scaler_input.transform(sequence)
             sequence_scaled = sequence_scaled.reshape(1, lookback, -1)
             pred_scaled = model.predict(sequence_scaled, verbose=0)
+            st.write("[DEBUG] pred_scaled:", pred_scaled)
             pred = scaler_target.inverse_transform(pred_scaled)[0][0]
+            st.write("[DEBUG] pred (inverse transform):", pred)
             preds.append(pred)
             forecast_index.append(current_time)
             df.at[current_time, 'ycd_level'] = pred
@@ -118,9 +120,6 @@ if uploaded_future and uploaded_history:
     # =============================
     forecast_index, forecast_preds = recursive_forecast(raw_future, history_df, model, scaler_input, scaler_target)
 
-    st.write("예측 결과 길이:", len(forecast_preds))
-    st.write("예측 결과 일부:", forecast_preds[:5])
-    
     # Bias 보정
     initial_level = history_df['ycd_level'].iloc[-1]
     predicted_start = forecast_preds[0]
