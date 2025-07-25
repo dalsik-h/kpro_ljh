@@ -24,7 +24,7 @@ if selected is None:
 
     cols = st.columns([1, 8])
     with cols[0]:
-        st.image("water_tap.png", width=48)  # 아이콘 크기는 조절 가능
+        st.image("water-tap.png", width=48)  # 아이콘 크기는 조절 가능
     with cols[1]:
         st.markdown("### 포항권 공업용수 AI 분석 시스템")
 
