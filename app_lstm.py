@@ -146,18 +146,26 @@ if uploaded_future and uploaded_history:
     bias = initial_level - predicted_start
     forecast_preds = [p + bias for p in forecast_preds]
 
-    # 후반부 기울기 완화 보정
-    tail_hours = 30
-    correction_factor = 1.2
+    # 후반부 기울기 보정
+    tail_hours = 24
+    # 보정 계수 조정
+    correction_factor = 1.5 # 기존보다 1.5배 더 기울기 보정 적용
+
     if len(forecast_preds) >= tail_hours + 1:
         pred_tail_slope = (forecast_preds[-1] - forecast_preds[-(tail_hours + 1)]) / tail_hours
         true_tail_slope = (history_df['ycd_level'].iloc[-1] - history_df['ycd_level'].iloc[-(tail_hours + 1)]) / tail_hours
-        slope_diff = pred_tail_slope - true_tail_slope
-        if slope_diff > 0:
-            for i in range(tail_hours):
-                forecast_preds[-tail_hours + i] -= correction_factor * slope_diff * ((i + 1) ** 1.2)
+        slope_diff = true_tail_slope - pred_tail_slope
+        for i in range(tail_hours):
+            forecast_preds[-tail_hours + i] += correction_factor * slope_diff * (i + 1)
 
-    # Smoothing
+        # plateau 보정
+        plateau_start = 24
+        plateau_end = 48
+        for i in range(plateau_start, plateau_end):
+            step = i - plateau_start + 1
+            weight = np.log1p(step)
+            forecast_preds[i] += slope_diff * 0.8 * weight  # 중간은 약하게 보정
+    # 전체 smoothing
     forecast_preds = savgol_filter(forecast_preds, window_length=9, polyorder=2)
 
     # 결과 정리 및 시각화
