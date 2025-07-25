@@ -22,11 +22,15 @@ if selected is None:
     # 포항권지사 타이틀 이미지 표시
     st.markdown("<br>", unsafe_allow_html=True)  # 약간의 상단 여백
 
-    cols = st.columns([1, 8])
-    with cols[0]:
-        st.image("water-tap.png", width=48)  # 아이콘 크기는 조절 가능
-    with cols[1]:
-        st.markdown("### 포항권 공업용수 AI 분석 시스템")
+    st.markdown(
+        """
+        <div style="display: flex; align-items: center; gap: 10px; padding-top: 20px;">
+            <img src="water-tap.png" width="48" style="margin-bottom: 4px;">
+            <span style="font-size: 32px; font-weight: 700;">포항권 공업용수 AI 분석 시스템</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.image("title.png", use_container_width=True)
 else:
