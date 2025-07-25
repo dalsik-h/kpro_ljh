@@ -20,16 +20,17 @@ selected = st.session_state.selected
 # ------------------- 오른쪽 메인 화면 ---------------------
 if selected is None:
     # 포항권지사 타이틀 이미지 표시
-    st.markdown("<br>", unsafe_allow_html=True)  # 약간의 상단 여백
-
+    
     cols = st.columns([1, 10])
     with cols[0]:
         st.image("water-tap.png", width=48)
     with cols[1]:
         st.markdown(
-            "<div style='padding-top: 10px; font-size: 32px; font-weight: bold;'>포항권 공업용수 AI 분석 시스템</div>",
+            "<div style='padding-top: 10px; font-size: 40px; font-weight: bold;'>포항권 공업용수 AI 분석 시스템</div>",
             unsafe_allow_html=True
         )
+    
+    st.markdown("<br>", unsafe_allow_html=True)  # 약간의 여백
 
     st.image("title.png", use_container_width=True)
 else:
