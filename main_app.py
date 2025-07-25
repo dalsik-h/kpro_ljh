@@ -26,7 +26,7 @@ if selected is None:
         st.image("water-tap.png", width=48)
     with cols[1]:
         st.markdown(
-            "<div style='padding-top: 10px; font-size: 40px; font-weight: bold;'>포항권 공업용수 AI 분석 시스템</div>",
+            "<div style='padding-top: 10px; align-items: center; font-size: 40px; font-weight: bold;'>포항권 공업용수 AI 분석 시스템</div>",
             unsafe_allow_html=True
         )
     
