@@ -129,6 +129,32 @@ if uploaded_future and uploaded_history:
             sequence_scaled = sequence_scaled.reshape(1, lookback, -1)
             pred_scaled = model.predict(sequence_scaled, verbose=0)
             pred = scaler_target.inverse_transform(pred_scaled)[0][0]
+
+            ##########################################################################################
+            if t == 0:
+                bias = initial_level - pred
+                pred += bias
+                initial_slope = 0
+            else:
+                pred += bias
+                slope = pred - preds[-1]
+                ratio = min(t / len(df), 1)
+                if slope > 0:
+                    # pred = preds[-1] + slope
+                    if t < int(len(df) * 0.4):  # 예: 40% 시점 이전엔 완만화 없음
+                        pred = preds[-1] + slope  # slope 그대로 반영
+                    else:
+                        weaken_ratio = np.exp(-7 * (ratio - 0.4) / 0.6)
+                        pred = preds[-1] + slope * weaken_ratio
+                    initial_slope = slope
+                else:
+                    # ✅ 하강이라면 완만하게 조정 (후반 갈수록 완만화)
+                    # weaken_ratio = max(0.5, 1 - math.log1p(ratio * 9) / math.log1p(10))
+                    weaken_ratio = max(0.3, np.exp(-2 * ratio))
+                    pred = preds[-1] + slope * weaken_ratio
+                    initial_slope = slope * weaken_ratio
+            ##########################################################################################
+
             preds.append(pred)
             forecast_index.append(current_time)
             df.at[current_time, 'ycd_level'] = pred
@@ -140,37 +166,9 @@ if uploaded_future and uploaded_history:
     # =============================
     forecast_index, forecast_preds = recursive_forecast(raw_future, history_df, model, scaler_input, scaler_target)
 
-    # Bias 보정
-    initial_level = history_df['ycd_level'].iloc[-1]
-    predicted_start = forecast_preds[0]
-    bias = initial_level - predicted_start
-    forecast_preds = [p + bias for p in forecast_preds]
-
-    # 후반부 기울기 보정
-    tail_hours = 24
-    # 보정 계수 조정
-    correction_factor = 1.5 # 기존보다 1.5배 더 기울기 보정 적용
-
-    if len(forecast_preds) >= tail_hours + 1:
-        pred_tail_slope = (forecast_preds[-1] - forecast_preds[-(tail_hours + 1)]) / tail_hours
-        true_tail_slope = (history_df['ycd_level'].iloc[-1] - history_df['ycd_level'].iloc[-(tail_hours + 1)]) / tail_hours
-        slope_diff = true_tail_slope - pred_tail_slope
-        for i in range(tail_hours):
-            forecast_preds[-tail_hours + i] += correction_factor * slope_diff * (i + 1)
-
-        # plateau 보정
-        plateau_start = 24
-        plateau_end = 48
-        for i in range(plateau_start, plateau_end):
-            step = i - plateau_start + 1
-            weight = np.log1p(step)
-            forecast_preds[i] += slope_diff * 0.8 * weight  # 중간은 약하게 보정
-    # 전체 smoothing
-    forecast_preds = savgol_filter(forecast_preds, window_length=9, polyorder=2)
-
     # 결과 정리 및 시각화
     forecast_df = pd.DataFrame({'date_time': forecast_index, 'predicted_ycd_level': forecast_preds})
-    forecast_df['predicted_ycd_level'] = forecast_df['predicted_ycd_level'].round(2)
+    # forecast_df['predicted_ycd_level'] = forecast_df['predicted_ycd_level'].round(2)
     forecast_df.set_index('date_time', inplace=True)
 
     st.success("예측 완료!")
