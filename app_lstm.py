@@ -94,6 +94,10 @@ if uploaded_future and uploaded_history:
         preds = []
         forecast_index = []
 
+        bias = 0  # 초기화
+        initial_slope = 0
+        initial_level = history_df['ycd_level'].iloc[-1]  # 마지막 실제값
+        
         for t in range(len(df)):
             current_time = df.index[t]
 
