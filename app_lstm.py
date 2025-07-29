@@ -97,7 +97,7 @@ if uploaded_future and uploaded_history:
         bias = 0  # 초기화
         initial_slope = 0
         initial_level = history_df['ycd_level'].iloc[-1]  # 마지막 실제값
-        
+
         for t in range(len(df)):
             current_time = df.index[t]
 
@@ -172,17 +172,30 @@ if uploaded_future and uploaded_history:
 
     # 결과 정리 및 시각화
     forecast_df = pd.DataFrame({'date_time': forecast_index, 'predicted_ycd_level': forecast_preds})
-    # forecast_df['predicted_ycd_level'] = forecast_df['predicted_ycd_level'].round(2)
+    forecast_df['predicted_ycd_level'] = forecast_df['predicted_ycd_level'].round(2)
     forecast_df.set_index('date_time', inplace=True)
 
     st.success("예측 완료!")
 
-        # 👉 예측 결과 표로 먼저 출력
+        # 예측 결과 표로 먼저 출력
     st.subheader("📋 예측 결과 표")
     st.dataframe(forecast_df)  # 또는 st.table() 사용 가능
 
 
-    st.line_chart(forecast_df)
+    st.subheader("📈 예측 결과 그래프")
 
-    # csv = forecast_df.to_csv().encode("utf-8-sig")
-    # st.download_button("예측 결과 CSV 다운로드", csv, "predicted_ycd_level.csv", "text/csv")
+    plt.figure(figsize=(12, 4))
+    plt.plot(forecast_df.index, forecast_df['predicted_ycd_level'], label='예측 수위')
+    plt.xlabel('시간')
+    plt.ylabel('수위')
+    plt.title('예측된 댐 수위')
+
+    # 🔽 y축 자동 조정
+    ymin = forecast_df['predicted_ycd_level'].min()
+    ymax = forecast_df['predicted_ycd_level'].max()
+    padding = (ymax - ymin) * 0.1
+    plt.ylim(ymin - padding, ymax + padding)
+
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
