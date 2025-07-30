@@ -13,8 +13,8 @@ from datetime import timedelta
 # =============================
 st.header("📈 댐 수위 예측 (LSTM+GRU 모델)")
 
-uploaded_future = st.file_uploader("미래 입력 파일 (예: future_input2.csv)", type=["csv"])
-uploaded_history = st.file_uploader("과거 입력 파일 (예: last_168_input.csv)", type=["csv"])
+uploaded_future = st.file_uploader(" ➡️ 예측기간에 대한 독립변수 데이터 (파일명: future_input2.csv)", type=["csv"])
+uploaded_history = st.file_uploader(" ➡️ 과거(4일) 전체(독립+종속)변수 데이터 (파일명: last_168_input.csv)", type=["csv"])
 
 if uploaded_future and uploaded_history:
     # =============================
@@ -185,10 +185,10 @@ if uploaded_future and uploaded_history:
     st.subheader("📈 예측 결과 그래프")
 
     plt.figure(figsize=(12, 4))
-    plt.plot(forecast_df.index, forecast_df['predicted_ycd_level'], label='예측 수위')
-    plt.xlabel('시간')
-    plt.ylabel('수위')
-    plt.title('예측된 댐 수위')
+    plt.plot(forecast_df.index, forecast_df['predicted_ycd_level'], label='Predicted Level')
+    plt.xlabel('Date/Time')
+    plt.ylabel('Dam Level')
+    plt.title('Predicted Dam Water Level')
 
     # 🔽 y축 자동 조정
     ymin = forecast_df['predicted_ycd_level'].min()
