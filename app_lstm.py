@@ -206,6 +206,8 @@ if uploaded_future and uploaded_history:
     st.header("🔋 안계소수력 발전전력 예측 (XGBoost 모델)")
 
     hpower_future = st.file_uploader(" ➡️ 예측기간에 대한 독립변수 데이터 (파일명: future_input3.csv)", type=["csv"])
+    hpower_df = pd.read_csv(hpower_future, parse_dates=['date_time'])
+    hpower_df.sort_values('date_time', inplace=True)
 
     if hpower_future:
 
@@ -223,7 +225,7 @@ if uploaded_future and uploaded_history:
         # ========================
         # 데이터 병합 및 정렬
         # ========================
-        merged_df = pd.merge(hpower_future, forecast_df, on='date_time', how='inner')
+        merged_df = pd.merge(hpower_df, forecast_df, on='date_time', how='inner')
 
         # 열 순서 맞추기 (모델 학습 시 사용한 순서)
         expected_features = ['agp_bp_vv', 'ycd_level', 'thj_vv', 'agp_inflow']
@@ -258,5 +260,5 @@ if uploaded_future and uploaded_history:
         plt.xticks(rotation=45)
         plt.legend()
         plt.tight_layout()
-        
+
         st.pyplot(plt)
