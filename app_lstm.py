@@ -206,10 +206,12 @@ if uploaded_future and uploaded_history:
     st.header("🔋 안계소수력 발전전력 예측 (XGBoost 모델)")
 
     hpower_future = st.file_uploader(" ➡️ 예측기간에 대한 독립변수 데이터 (파일명: future_input3.csv)", type=["csv"])
-    hpower_df = pd.read_csv(hpower_future, parse_dates=['date_time'])
-    hpower_df.sort_values('date_time', inplace=True)
 
-    if hpower_future:
+
+    if hpower_future is not None:
+
+        hpower_df = pd.read_csv(hpower_future, parse_dates=['date_time'])
+        hpower_df.sort_values('date_time', inplace=True)
 
         # ========================
         # 모델 및 스케일러 불러오기
@@ -236,7 +238,7 @@ if uploaded_future and uploaded_history:
         # ========================
         scaled2_input = scaler2.transform(model_input)
         predictions = model2.predict(scaled2_input)
-        merged_df['predicted_agp_power'] = predictions
+        merged_df['predicted_agp_power'] = np.floor(predictions).astype(int)
         # ========================
         # 결과 출력
         # ========================
