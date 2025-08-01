@@ -178,11 +178,11 @@ if uploaded_future and uploaded_history:
     st.success("예측 완료!")
 
         # 예측 결과 표로 먼저 출력
-    st.subheader("📋 예측 결과 표")
-    st.dataframe(forecast_df)  # 또는 st.table() 사용 가능
+    st.subheader("📋 영천댐 수위 예측 결과 표")
+    st.dataframe(forecast_df)  
 
 
-    st.subheader("📈 예측 결과 그래프")
+    st.subheader("📈 영천댐 수위 예측 결과 그래프")
 
     plt.figure(figsize=(12, 4))
     plt.plot(forecast_df.index, forecast_df['predicted_ycd_level'], label='Predicted Level')
@@ -199,3 +199,64 @@ if uploaded_future and uploaded_history:
     plt.grid(True)
     plt.legend()
     st.pyplot(plt)
+
+    # =============================
+    # 안계소수력 발전전력 예측 부분
+    # =============================
+    st.header("🔋 안계소수력 발전전력 예측 (XGBoost 모델)")
+
+    hpower_future = st.file_uploader(" ➡️ 예측기간에 대한 독립변수 데이터 (파일명: future_input3.csv)", type=["csv"])
+
+    if hpower_future:
+
+        # ========================
+        # 모델 및 스케일러 불러오기
+        # ========================
+        model2 = joblib.load('final_xgb_model.pkl')
+        scaler2 = joblib.load('step3_standard_scaler.pkl')
+
+        # ========================
+        # 1차로 예측된 댐수위 활용
+        # ========================
+        forecast_df = forecast_df.rename(columns={'predicted_ycd_level': 'ycd_level'})
+
+        # ========================
+        # 데이터 병합 및 정렬
+        # ========================
+        merged_df = pd.merge(hpower_future, forecast_df, on='date_time', how='inner')
+
+        # 열 순서 맞추기 (모델 학습 시 사용한 순서)
+        expected_features = ['agp_bp_vv', 'ycd_level', 'thj_vv', 'agp_inflow']
+        model_input = merged_df[expected_features]
+
+        # ========================
+        # 스케일링 및 예측
+        # ========================
+        scaled2_input = scaler2.transform(model_input)
+        predictions = model2.predict(scaled2_input)
+        merged_df['predicted_agp_power'] = predictions
+        # ========================
+        # 결과 출력
+        # ========================
+        st.success("예측 완료!")
+
+        # 예측 결과 표로 먼저 출력
+        st.subheader("📋 안계(소) 발전전력 예측 결과 표")
+        st.dataframe(merged_df)
+
+        # ========================
+        # 시각화
+        # ========================
+        st.subheader("📈 안계(소) 발전전력 예측 결과 그래프")
+
+        plt.figure(figsize=(12, 5))
+        plt.plot(merged_df['date_time'], merged_df['predicted_agp_power'], marker='o', linestyle='-', label='predicted agp_power')
+        plt.xlabel('Date / Time')
+        plt.ylabel('Predicted agp_power')
+        plt.title('XGBoost agp_power Prediction')
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.legend()
+        plt.tight_layout()
+        
+        st.pyplot(plt)
