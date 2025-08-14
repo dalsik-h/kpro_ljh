@@ -292,14 +292,31 @@ if uploaded_future and uploaded_history:
             e_str = pd.to_datetime(e_ts).strftime("%Y-%m-%d %H:%M")
             return (s_str, m_str, e_str, s_ts, m_ts, e_ts)
 
-        # ---- (1) 댐 수위 요약 ----
-        if 'forecast_df' in locals() and not forecast_df.empty:
-            # ✅ 열 이름을 동적으로 결정
-            level_col = None
-            if 'predicted_ycd_level' in forecast_df.columns:
-                level_col = 'predicted_ycd_level'
-            elif 'ycd_level' in forecast_df.columns:
-                level_col = 'ycd_level'
+        # 박스 렌더 함수
+        def _summary_box(level_text_html, power_text_html=None, total_text_html=None):
+            box_open = """
+            <div style="
+                border: 2px solid #4CAF50;
+                border-radius: 10px;
+                padding: 16px 18px;
+                margin-top: 12px;
+                background: #f9fff9;
+            ">
+            """
+            parts = [box_open, level_text_html]
+            if power_text_html:
+                parts.append(power_text_html)
+            if total_text_html:
+                parts.append(total_text_html)
+            parts.append("</div>")
+            st.markdown("\n".join(parts), unsafe_allow_html=True)
+
+        # 2) 댐 수위 요약 (rename 전/후 모두 대응)
+        st.subheader("📝 최종 요약")
+        if not forecast_df.empty:
+            level_col = 'predicted_ycd_level' if 'predicted_ycd_level' in forecast_df.columns else (
+                'ycd_level' if 'ycd_level' in forecast_df.columns else None
+            )
 
             if level_col is None:
                 st.info("예측 수위 컬럼을 찾을 수 없습니다. (predicted_ycd_level 또는 ycd_level)")
@@ -308,7 +325,7 @@ if uploaded_future and uploaded_history:
                 if pick is not None:
                     s_str, m_str, e_str, s_ts, m_ts, e_ts = pick
 
-                    # 값 추출
+                    # 값
                     s_level = float(forecast_df.loc[s_ts, level_col])
                     m_level = float(forecast_df.loc[m_ts, level_col])
                     e_level = float(forecast_df.loc[e_ts, level_col])
@@ -317,21 +334,29 @@ if uploaded_future and uploaded_history:
                     dir_level_1 = _dir_word(s_level, m_level)
                     dir_level_2 = _dir_word(m_level, e_level)
 
-                    st.subheader("📝 최종 요약")
-                    st.markdown(
-                        f"""
-                    **댐 수위**는 **{s_str}** 기준 **{s_level:.2f}**으로 시작해 **중간시점({m_str})**에는 **{m_level:.2f}**까지 **{dir_level_1}**할 예정이며,  
-                    **종료시점({e_str})**에는 **{e_level:.2f}**로 **{dir_level_2}**할 예정입니다.
-                        """
-                    )
+                    # 수위 요약 HTML
+                    level_text_html = f"""
+                    <div style="font-size:18px; font-weight:600; line-height:1.5; margin-bottom:8px;">
+                      <span style="font-weight:800;">댐 수위</span>는 <span style="font-weight:800;">{s_str}</span> 기준
+                      <span style="font-weight:800;">{s_level:.2f}</span>으로 시작해
+                      <span style="font-weight:800;">중간시점({m_str})</span>에는
+                      <span style="font-weight:800;">{m_level:.2f}</span>까지
+                      <span style="font-weight:800;">{dir_level_1}</span>할 예정이며,
+                      <span style="font-weight:800;">종료시점({e_str})</span>에는
+                      <span style="font-weight:800;">{e_level:.2f}</span>로
+                      <span style="font-weight:800;">{dir_level_2}</span>할 예정입니다.
+                    </div>
+                    """
 
-                    # ---- (2) 발전전력 요약 (있을 때만) ----
-                    has_power = "merged_df" in locals() and not merged_df.empty and "predicted_agp_power" in merged_df.columns
-                    if has_power:
+                    # 3) 발전전력 요약/총합 (이번 블록은 hpower_future 업로드된 경우에만 실행되는 위치라 merged_df 존재)
+                    power_text_html = None
+                    total_text_html = None
+
+                    if ("predicted_agp_power" in merged_df.columns) and (len(merged_df) > 0):
                         pick2 = _pick_points_from_index(merged_df["date_time"].values)
                         if pick2 is not None:
                             s2_str, m2_str, e2_str, s2_ts, m2_ts, e2_ts = pick2
-                            # 값(정수)
+
                             s_pow = int(merged_df.loc[merged_df["date_time"] == s2_ts, "predicted_agp_power"].iloc[0])
                             m_pow = int(merged_df.loc[merged_df["date_time"] == m2_ts, "predicted_agp_power"].iloc[0])
                             e_pow = int(merged_df.loc[merged_df["date_time"] == e2_ts, "predicted_agp_power"].iloc[0])
@@ -339,9 +364,25 @@ if uploaded_future and uploaded_history:
                             dir_pow_1 = _dir_word(s_pow, m_pow)
                             dir_pow_2 = _dir_word(m_pow, e_pow)
 
-                            st.markdown(
-                                f"""
-                        이에 따라 **발전전력**은 **{s2_str}** 기준 **{s_pow}**로 시작해 **중간시점({m2_str})**에는 **{m_pow}**까지 **{dir_pow_1}**하며,  
-                        **종료시점({e2_str})**에는 **{e_pow}**로 **{dir_pow_2}**할 것으로 예측됩니다.
-                                """
-                            )
+                            power_text_html = f"""
+                            <div style="font-size:18px; font-weight:600; line-height:1.5; margin-bottom:8px;">
+                              <span style="font-weight:800;">발전전력</span>은 <span style="font-weight:800;">{s2_str}</span> 기준
+                              <span style="font-weight:800;">{s_pow}</span>로 시작해
+                              <span style="font-weight:800;">중간시점({m2_str})</span>에는
+                              <span style="font-weight:800;">{m_pow}</span>까지
+                              <span style="font-weight:800;">{dir_pow_1}</span>하며,
+                              <span style="font-weight:800;">종료시점({e2_str})</span>에는
+                              <span style="font-weight:800;">{e_pow}</span>로
+                              <span style="font-weight:800;">{dir_pow_2}</span>할 것으로 예측됩니다.
+                            </div>
+                            """
+
+                            total_power = int(merged_df['predicted_agp_power'].sum())
+                            total_text_html = f"""
+                            <div style="font-size:18px; font-weight:700; margin-top:4px;">
+                              총 발전생산전력 (3일): <span style="font-weight:900;">{total_power} kW</span>
+                            </div>
+                            """
+
+                    # 🔳 한 박스에 출력 (제목은 box 내부에 넣지 않음)
+                    _summary_box(level_text_html, power_text_html, total_text_html)
