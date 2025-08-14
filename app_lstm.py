@@ -343,7 +343,7 @@ if uploaded_future and uploaded_history:
     <span style="{NUM}">{s_level:.2f}</span>으로 시작해
     <span style="font-weight:800;">중간시점({m_str})</span>에는
     <span style="{NUM}">{m_level:.2f}</span>까지
-    <span style="font-weight:800;">{dir_level_1}</span>할 예정이며, <br><br>
+    <span style="font-weight:800;">{dir_level_1}</span>할 예정이며, <br>
     <span style="font-weight:800;">종료시점({e_str})</span>에는
     <span style="{NUM}">{e_level:.2f}</span>로
     <span style="font-weight:800;">{dir_level_2}</span>할 예정입니다.
@@ -372,7 +372,7 @@ if uploaded_future and uploaded_history:
     <span style="{NUM}">{s_pow}</span>로 시작해
     <span style="font-weight:800;">중간시점({m2_str})</span>에는
     <span style="{NUM}">{m_pow}</span>까지
-    <span style="font-weight:800;">{dir_pow_1}</span>하며, <br><br>
+    <span style="font-weight:800;">{dir_pow_1}</span>하며, <br>
     <span style="font-weight:800;">종료시점({e2_str})</span>에는
     <span style="{NUM}">{e_pow}</span>로
     <span style="font-weight:800;">{dir_pow_2}</span>할 것으로 예측됩니다.
