@@ -264,3 +264,77 @@ if uploaded_future and uploaded_history:
         plt.tight_layout()
 
         st.pyplot(plt)
+
+
+        # =========================================
+        # 최종 요약 텍스트 생성 (댐 수위 & 발전전력)
+        # =========================================
+
+        def _dir_word(a, b):
+            """a→b 변화 방향을 한국어로 반환"""
+            if b > a:
+                return "상승"
+            elif b < a:
+                return "하강"
+            else:
+                return "변화 없음"
+
+        def _pick_points_from_index(idx_like):
+            """DatetimeIndex나 datetime 시리즈에서 시작/중간/끝 시점과 포맷 문자열 반환"""
+            start_ts = idx_like[0]
+            mid_ts   = idx_like[len(idx_like)//2]
+            end_ts   = idx_like[-1]
+            return (
+                start_ts.strftime("%Y-%m-%d %H:%M"),
+                mid_ts.strftime("%Y-%m-%d %H:%M"),
+                end_ts.strftime("%Y-%m-%d %H:%M"),
+                start_ts, mid_ts, end_ts
+            )
+
+        # ---- (1) 댐 수위 요약 ----
+        if not forecast_df.empty:
+            # 시점 선택
+            s_str, m_str, e_str, s_ts, m_ts, e_ts = _pick_points_from_index(forecast_df.index)
+
+            # 값 선택
+            s_level = float(forecast_df.loc[s_ts, "predicted_ycd_level"])
+            m_level = float(forecast_df.loc[m_ts, "predicted_ycd_level"])
+            e_level = float(forecast_df.loc[e_ts, "predicted_ycd_level"])
+
+            # 방향 판단
+            dir_level_1 = _dir_word(s_level, m_level)   # 시작→중간
+            dir_level_2 = _dir_word(m_level, e_level)   # 중간→종료
+
+            # ---- (2) 발전전력 요약 (있을 때만) ----
+            has_power = "hpower_df" in locals() and "merged_df" in locals() and not merged_df.empty
+
+            st.subheader("📝 최종 요약")
+
+            # 댐 수위 문장
+            st.markdown(
+                f"""
+        **댐 수위**는 **{s_str}** 기준 **{s_level:.2f}**으로 시작해 **중간시점({m_str})**에는 **{m_level:.2f}**까지 **{dir_level_1}**할 예정이며,  
+        **종료시점({e_str})**에는 **{e_level:.2f}**로 **{dir_level_2}**할 예정입니다.
+                """
+            )
+
+            # 발전전력 문장 (발전전력 예측까지 완료된 경우)
+            if has_power:
+                # 시간대 동일 범위 병합 결과(merged_df)에서 시작/중간/종료 시점
+                s2_str, m2_str, e2_str, s2_ts, m2_ts, e2_ts = _pick_points_from_index(merged_df["date_time"])
+
+                # 값 추출 (정수)
+                s_pow = int(merged_df.loc[merged_df["date_time"] == s2_ts, "predicted_agp_power"].iloc[0])
+                m_pow = int(merged_df.loc[merged_df["date_time"] == m2_ts, "predicted_agp_power"].iloc[0])
+                e_pow = int(merged_df.loc[merged_df["date_time"] == e2_ts, "predicted_agp_power"].iloc[0])
+
+                # 방향 판단
+                dir_pow_1 = _dir_word(s_pow, m_pow)
+                dir_pow_2 = _dir_word(m_pow, e_pow)
+
+                st.markdown(
+                    f"""
+        이에 따라 **발전전력**은 **{s2_str}** 기준 **{s_pow}**로 시작해 **중간시점({m2_str})**에는 **{m_pow}**까지 **{dir_pow_1}**하며,  
+        **종료시점({e2_str})**에는 **{e_pow}**로 **{dir_pow_2}**할 것으로 예측됩니다.
+                    """
+                )
