@@ -271,70 +271,77 @@ if uploaded_future and uploaded_history:
         # =========================================
 
         def _dir_word(a, b):
-            """a→b 변화 방향을 한국어로 반환"""
-            if b > a:
-                return "상승"
-            elif b < a:
-                return "하강"
-            else:
-                return "변화 없음"
+            if b > a: return "상승"
+            if b < a: return "하강"
+            return "변화 없음"
 
         def _pick_points_from_index(idx_like):
-            """DatetimeIndex나 datetime 시리즈에서 시작/중간/끝 시점과 포맷 문자열 반환"""
-            start_ts = idx_like[0]
-            mid_ts   = idx_like[len(idx_like)//2]
-            end_ts   = idx_like[-1]
-            return (
-                start_ts.strftime("%Y-%m-%d %H:%M"),
-                mid_ts.strftime("%Y-%m-%d %H:%M"),
-                end_ts.strftime("%Y-%m-%d %H:%M"),
-                start_ts, mid_ts, end_ts
-            )
+            n = len(idx_like)
+            if n == 0:
+                return None
+            if n == 1:
+                i0 = i1 = i2 = 0
+            elif n == 2:
+                i0, i1, i2 = 0, 0, 1
+            else:
+                i0, i1, i2 = 0, n // 2, n - 1
+
+            s_ts, m_ts, e_ts = idx_like[i0], idx_like[i1], idx_like[i2]
+            s_str = pd.to_datetime(s_ts).strftime("%Y-%m-%d %H:%M")
+            m_str = pd.to_datetime(m_ts).strftime("%Y-%m-%d %H:%M")
+            e_str = pd.to_datetime(e_ts).strftime("%Y-%m-%d %H:%M")
+            return (s_str, m_str, e_str, s_ts, m_ts, e_ts)
 
         # ---- (1) 댐 수위 요약 ----
-        if not forecast_df.empty:
-            # 시점 선택
-            s_str, m_str, e_str, s_ts, m_ts, e_ts = _pick_points_from_index(forecast_df.index)
+        if 'forecast_df' in locals() and not forecast_df.empty:
+            # ✅ 열 이름을 동적으로 결정
+            level_col = None
+            if 'predicted_ycd_level' in forecast_df.columns:
+                level_col = 'predicted_ycd_level'
+            elif 'ycd_level' in forecast_df.columns:
+                level_col = 'ycd_level'
 
-            # 값 선택
-            s_level = float(forecast_df.loc[s_ts, "predicted_ycd_level"])
-            m_level = float(forecast_df.loc[m_ts, "predicted_ycd_level"])
-            e_level = float(forecast_df.loc[e_ts, "predicted_ycd_level"])
+            if level_col is None:
+                st.info("예측 수위 컬럼을 찾을 수 없습니다. (predicted_ycd_level 또는 ycd_level)")
+            else:
+                pick = _pick_points_from_index(forecast_df.index)
+                if pick is not None:
+                    s_str, m_str, e_str, s_ts, m_ts, e_ts = pick
 
-            # 방향 판단
-            dir_level_1 = _dir_word(s_level, m_level)   # 시작→중간
-            dir_level_2 = _dir_word(m_level, e_level)   # 중간→종료
+                    # 값 추출
+                    s_level = float(forecast_df.loc[s_ts, level_col])
+                    m_level = float(forecast_df.loc[m_ts, level_col])
+                    e_level = float(forecast_df.loc[e_ts, level_col])
 
-            # ---- (2) 발전전력 요약 (있을 때만) ----
-            has_power = "hpower_df" in locals() and "merged_df" in locals() and not merged_df.empty
+                    # 방향
+                    dir_level_1 = _dir_word(s_level, m_level)
+                    dir_level_2 = _dir_word(m_level, e_level)
 
-            st.subheader("📝 최종 요약")
+                    st.subheader("📝 최종 요약")
+                    st.markdown(
+                        f"""
+                    **댐 수위**는 **{s_str}** 기준 **{s_level:.2f}**으로 시작해 **중간시점({m_str})**에는 **{m_level:.2f}**까지 **{dir_level_1}**할 예정이며,  
+                    **종료시점({e_str})**에는 **{e_level:.2f}**로 **{dir_level_2}**할 예정입니다.
+                        """
+                    )
 
-            # 댐 수위 문장
-            st.markdown(
-                f"""
-        **댐 수위**는 **{s_str}** 기준 **{s_level:.2f}**으로 시작해 **중간시점({m_str})**에는 **{m_level:.2f}**까지 **{dir_level_1}**할 예정이며,  
-        **종료시점({e_str})**에는 **{e_level:.2f}**로 **{dir_level_2}**할 예정입니다.
-                """
-            )
+                    # ---- (2) 발전전력 요약 (있을 때만) ----
+                    has_power = "merged_df" in locals() and not merged_df.empty and "predicted_agp_power" in merged_df.columns
+                    if has_power:
+                        pick2 = _pick_points_from_index(merged_df["date_time"].values)
+                        if pick2 is not None:
+                            s2_str, m2_str, e2_str, s2_ts, m2_ts, e2_ts = pick2
+                            # 값(정수)
+                            s_pow = int(merged_df.loc[merged_df["date_time"] == s2_ts, "predicted_agp_power"].iloc[0])
+                            m_pow = int(merged_df.loc[merged_df["date_time"] == m2_ts, "predicted_agp_power"].iloc[0])
+                            e_pow = int(merged_df.loc[merged_df["date_time"] == e2_ts, "predicted_agp_power"].iloc[0])
 
-            # 발전전력 문장 (발전전력 예측까지 완료된 경우)
-            if has_power:
-                # 시간대 동일 범위 병합 결과(merged_df)에서 시작/중간/종료 시점
-                s2_str, m2_str, e2_str, s2_ts, m2_ts, e2_ts = _pick_points_from_index(merged_df["date_time"])
+                            dir_pow_1 = _dir_word(s_pow, m_pow)
+                            dir_pow_2 = _dir_word(m_pow, e_pow)
 
-                # 값 추출 (정수)
-                s_pow = int(merged_df.loc[merged_df["date_time"] == s2_ts, "predicted_agp_power"].iloc[0])
-                m_pow = int(merged_df.loc[merged_df["date_time"] == m2_ts, "predicted_agp_power"].iloc[0])
-                e_pow = int(merged_df.loc[merged_df["date_time"] == e2_ts, "predicted_agp_power"].iloc[0])
-
-                # 방향 판단
-                dir_pow_1 = _dir_word(s_pow, m_pow)
-                dir_pow_2 = _dir_word(m_pow, e_pow)
-
-                st.markdown(
-                    f"""
-        이에 따라 **발전전력**은 **{s2_str}** 기준 **{s_pow}**로 시작해 **중간시점({m2_str})**에는 **{m_pow}**까지 **{dir_pow_1}**하며,  
-        **종료시점({e2_str})**에는 **{e_pow}**로 **{dir_pow_2}**할 것으로 예측됩니다.
-                    """
-                )
+                            st.markdown(
+                                f"""
+                        이에 따라 **발전전력**은 **{s2_str}** 기준 **{s_pow}**로 시작해 **중간시점({m2_str})**에는 **{m_pow}**까지 **{dir_pow_1}**하며,  
+                        **종료시점({e2_str})**에는 **{e_pow}**로 **{dir_pow_2}**할 것으로 예측됩니다.
+                                """
+                            )
