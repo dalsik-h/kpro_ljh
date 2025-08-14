@@ -312,6 +312,8 @@ if uploaded_future and uploaded_history:
             st.markdown("\n".join(parts), unsafe_allow_html=True)
 
         # 2) 댐 수위 요약 (rename 전/후 모두 대응)
+
+        NUM = "color:#d32f2f; font-weight:900;"
         st.subheader("📝 최종 요약")
         if not forecast_df.empty:
             level_col = 'predicted_ycd_level' if 'predicted_ycd_level' in forecast_df.columns else (
@@ -338,12 +340,12 @@ if uploaded_future and uploaded_history:
                     level_text_html = f"""
 <div style="font-size:18px; font-weight:600; line-height:1.5; margin-bottom:8px;">
     <span style="font-weight:800;">댐 수위</span>는 <span style="font-weight:800;">{s_str}</span> 기준
-    <span style="font-weight:800;">{s_level:.2f}</span>으로 시작해
+    <span style="{NUM}">{s_level:.2f}</span>으로 시작해
     <span style="font-weight:800;">중간시점({m_str})</span>에는
-    <span style="font-weight:800;">{m_level:.2f}</span>까지
-    <span style="font-weight:800;">{dir_level_1}</span>할 예정이며,
+    <span style="{NUM}">{m_level:.2f}</span>까지
+    <span style="font-weight:800;">{dir_level_1}</span>할 예정이며, <br><br>
     <span style="font-weight:800;">종료시점({e_str})</span>에는
-    <span style="font-weight:800;">{e_level:.2f}</span>로
+    <span style="{NUM}">{e_level:.2f}</span>로
     <span style="font-weight:800;">{dir_level_2}</span>할 예정입니다.
 </div>
                     """
@@ -367,12 +369,12 @@ if uploaded_future and uploaded_history:
                             power_text_html = f"""
 <div style="font-size:18px; font-weight:600; line-height:1.5; margin-bottom:8px;">
     <span style="font-weight:800;">발전전력</span>은 <span style="font-weight:800;">{s2_str}</span> 기준
-    <span style="font-weight:800;">{s_pow}</span>로 시작해
+    <span style="{NUM}">{s_pow}</span>로 시작해
     <span style="font-weight:800;">중간시점({m2_str})</span>에는
-    <span style="font-weight:800;">{m_pow}</span>까지
-    <span style="font-weight:800;">{dir_pow_1}</span>하며,
+    <span style="{NUM}">{m_pow}</span>까지
+    <span style="font-weight:800;">{dir_pow_1}</span>하며, <br><br>
     <span style="font-weight:800;">종료시점({e2_str})</span>에는
-    <span style="font-weight:800;">{e_pow}</span>로
+    <span style="{NUM}">{e_pow}</span>로
     <span style="font-weight:800;">{dir_pow_2}</span>할 것으로 예측됩니다.
 </div>
                             """
@@ -380,7 +382,7 @@ if uploaded_future and uploaded_history:
                             total_power = int(merged_df['predicted_agp_power'].sum())
                             total_text_html = f"""
 <div style="font-size:18px; font-weight:700; margin-top:4px;">
-    총 발전생산전력 (3일): <span style="font-weight:900;">{total_power} kW</span>
+    총 발전생산전력 (3일) 예상치 : <span style="{NUM}">{total_power} kW</span>
 </div>
                             """
 
