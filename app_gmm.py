@@ -164,9 +164,9 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             if len(df_scaled) > 1000:
                 df_sample = df_scaled.sample(n=1000, random_state=42)
                 idx = df_sample.index
-                cluster_sample = df.loc[idx, 'cluster']      # ✅ 라벨 인덱싱은 .loc
+                cluster_sample = df.loc[idx, 'cluster']      # 라벨 인덱싱은 .loc
             else:
-                df_sample = df_scaled                        # ✅ 길이 일치 보장
+                df_sample = df_scaled                        # 길이 일치 보장
                 cluster_sample = df['cluster']
 
             # (선택) perplexity를 샘플 수에 맞게 안전하게 설정
@@ -174,8 +174,27 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             perplexity = min(30, max(5, n_samp // 3))
 
             with st.spinner("t-SNE 계산 중입니다..."):
-                tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42, n_iter=1000)
-                tsne_result = tsne.fit_transform(df_sample)
+                # ⬇⬇ 호환 초기화 (n_iter 제거, 버전에 따라 max_iter 사용)
+                try:
+                    tsne = TSNE(
+                        n_components=2,
+                        perplexity=perplexity,
+                        learning_rate="auto",
+                        init="pca",
+                        random_state=42,
+                    )
+                except TypeError:
+                    # 일부 최신/특정 빌드에서 이름이 바뀐 경우 대응
+                    tsne = TSNE(
+                        n_components=2,
+                        perplexity=perplexity,
+                        learning_rate="auto",
+                        init="pca",
+                        random_state=42,
+                        max_iter=1000,  # 대체 인자
+                    )
+
+                tsne_result = tsne.fit_transform(df_sample.values)
 
             fig3 = plt.figure(figsize=(5, 3))
             plt.scatter(tsne_result[:, 0], tsne_result[:, 1],
