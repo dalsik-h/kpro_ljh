@@ -160,24 +160,29 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
     with tab2:
         if st.button("t-SNE 시각화 실행"):
             st.info("잠시만 기다려 주세요.")
-            df_sample = df_scaled.copy()
+            # 샘플링
             if len(df_scaled) > 1000:
                 df_sample = df_scaled.sample(n=1000, random_state=42)
-                cluster_sample = df['cluster'].iloc[df_sample.index]
+                idx = df_sample.index
+                cluster_sample = df.loc[idx, 'cluster']      # ✅ 라벨 인덱싱은 .loc
             else:
+                df_sample = df_scaled                        # ✅ 길이 일치 보장
                 cluster_sample = df['cluster']
 
+            # (선택) perplexity를 샘플 수에 맞게 안전하게 설정
+            n_samp = len(df_sample)
+            perplexity = min(30, max(5, n_samp // 3))
+
             with st.spinner("t-SNE 계산 중입니다..."):
-                tsne = TSNE(n_components=2, perplexity=30, random_state=42, n_iter=1000)
+                tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42, n_iter=1000)
                 tsne_result = tsne.fit_transform(df_sample)
 
             fig3 = plt.figure(figsize=(5, 3))
-            plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=cluster_sample, cmap='tab10', s=10, alpha=0.7)
+            plt.scatter(tsne_result[:, 0], tsne_result[:, 1],
+                        c=cluster_sample.values, cmap='tab10', s=10, alpha=0.7)  # ✅ 길이/정렬 일치
             plt.title("t-SNE 기반 클러스터 시각화")
-            plt.xlabel("t-SNE 1")
-            plt.ylabel("t-SNE 2")
-            plt.colorbar(label="Cluster")
-            plt.grid()
+            plt.xlabel("t-SNE 1"); plt.ylabel("t-SNE 2")
+            plt.colorbar(label="Cluster"); plt.grid()
             st.pyplot(fig3)
 
     st.subheader("7. 클러스터 대표 샘플 조회")
