@@ -83,7 +83,7 @@ if st.button("GMM 클러스터 수 평가 실행"):
 @st.cache_data
 def evaluate_k_gmm(X, k):
     model = GaussianMixture(n_components=k, covariance_type='full', random_state=42)
-    labels = model.fit_predict(X)  # 하드 할당
+    labels = model.fit_predict(X) 
     return {
         "silhouette": silhouette_score(X, labels),
         "calinski": calinski_harabasz_score(X, labels),
@@ -620,8 +620,12 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
 
             # 중심과 거리 계산
             # 필요한 컬럼 순서를 확실히 맞춰서 추출
-            cols = df_scaled.columns
-            center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
+            # #######################################
+            # cols = df_scaled.columns
+            # center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
+            feature_cols = df_scaled.columns
+            center_vector = pd.Series(gmm.means_[closest_cluster], index=feature_cols).values.reshape(1, -1)
+            # #######################################
             distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
             closest_100['dist_to_center'] = distances_to_center
 
@@ -631,17 +635,35 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             st.subheader("유사 클러스터의 대표 시점 상위 10개")
             st.dataframe(closest_10.drop(columns='abs_diff').round(2))
 
+            # #######################################
             # 버튼 가로 나열
-            st.subheader("대표 시점 선택")
-            cols = st.columns(len(closest_10))  # 열 수 = 10
+            # st.subheader("대표 시점 선택")
+            # cols = st.columns(len(closest_10))  # 열 수 = 10
 
-            for col, (i, row) in zip(cols, closest_10.iterrows()):
-                with col:
-                    if st.button(f"{i.strftime('%Y-%m-%d %H:%M:%S')} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;선택", key=str(i)):
-                        selected_row = df.loc[i]
-                        st.session_state.rep_row = selected_row
-                        st.session_state.rep_time = i
-                        break
+            # for col, (i, row) in zip(cols, closest_10.iterrows()):
+            #     with col:
+            #         if st.button(f"{i.strftime('%Y-%m-%d %H:%M:%S')} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;선택", key=str(i)):
+            #             selected_row = df.loc[i]
+            #             st.session_state.rep_row = selected_row
+            #             st.session_state.rep_time = i
+            #             break
+            # #######################################
+            st.subheader("대표 시점 선택")
+            def choose_rep(idx):
+                st.session_state.rep_row = df.loc[idx]
+                st.session_state.rep_time = idx
+
+            # 버튼을 모두 렌더링 (break 금지)
+            layout_cols = st.columns(len(closest_10))  # 화면용 컬럼(레이아웃)
+            for col_box, (idx, row) in zip(layout_cols, closest_10.iterrows()):
+                with col_box:
+                    st.button(
+                        f"{idx.strftime('%Y-%m-%d %H:%M:%S')}  선택",
+                        key=f"choose_{idx.value}",   # 고유 키(타임스탬프 ns 사용)
+                        on_click=choose_rep,
+                        args=(idx,)
+                    )
+            # #######################################
 
             # 최종 선택된 값을 관망도상에 표시하는 코드
             if 'rep_row' in st.session_state:
