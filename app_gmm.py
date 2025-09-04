@@ -658,7 +658,7 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             for col_box, (idx, row) in zip(layout_cols, closest_10.iterrows()):
                 with col_box:
                     st.button(
-                        f"{idx.strftime('%Y-%m-%d %H:%M:%S')}  선택",
+                        f"{idx.strftime('%Y-%m-%d %H:%M:%S')}    선택",
                         key=f"choose_{idx.value}",   # 고유 키(타임스탬프 ns 사용)
                         on_click=choose_rep,
                         args=(idx,)
