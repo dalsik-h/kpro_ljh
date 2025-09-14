@@ -611,29 +611,77 @@ if 'df' in st.session_state and 'gmm' in st.session_state:
             # 입력값 기준으로 가장 가까운 100개
             closest_100 = cluster_df.nsmallest(100, 'abs_diff')
 
-            # 중심벡터 계산
-            center_vector = gmm.means_[closest_cluster].reshape(1, -1)
+            # df_scaled에서 closest_100 인덱스만 '같은 순서'로 추출 (정합 중요)
+            # ※ gmm을 학습할 때 사용한 피처 컬럼만 선택했다면 그 컬럼들로 제한하세요.
+            # X_cols = gmm_feature_cols  # 만약 따로 관리 중이면 이걸 사용
+            X_cols = df_scaled.columns
+            scaled_subset = df_scaled.loc[closest_100.index, X_cols]
 
-            # df_scaled에서 closest_100 인덱스만 추출
-            subset_index = closest_100.index.intersection(df_scaled.index)
-            scaled_subset = df_scaled.loc[subset_index]
+            # ---- 확률 기반: 해당 클러스터 소속 확률 구하기
+            proba_matrix = gmm.predict_proba(scaled_subset)          # (n_samples, n_clusters)
+            proba_series = pd.Series(proba_matrix[:, closest_cluster],
+                                    index=scaled_subset.index,
+                                    name='membership_prob')
 
-            # 중심과 거리 계산
-            # 필요한 컬럼 순서를 확실히 맞춰서 추출
-            # #######################################
-            # cols = df_scaled.columns
-            # center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
-            feature_cols = df_scaled.columns
-            center_vector = pd.Series(gmm.means_[closest_cluster], index=feature_cols).values.reshape(1, -1)
-            # #######################################
-            distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
-            closest_100['dist_to_center'] = distances_to_center
+            # closest_100에 확률 붙이기 (인덱스로 정렬되어 안전하게 결합)
+            closest_100 = closest_100.join(proba_series)
 
-            # 중심에 가까운 순서로 상위 10개 추출
-            closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
+            # 보기 좋게 퍼센트도 하나 만들어 두기(선택)
+            closest_100['소속확률(%)'] = closest_100['membership_prob'] * 100
+
+            # 중심 '거리'가 아니라 '소속 확률'이므로 내림차순 정렬이 맞음 (확률이 클수록 중심/해당 클러스터에 더 가깝다고 해석)
+            closest_10 = closest_100.sort_values('membership_prob', ascending=False).iloc[:10]
 
             st.subheader("유사 클러스터의 대표 시점 상위 10개")
             st.dataframe(closest_10.drop(columns='abs_diff').round(2))
+
+
+        # # ====================
+        # # 9. 유사 클러스터 내 대표 시점 추천
+        # # ====================
+        # with st.expander("유사 클러스터 내 대표 시점 추천 보기"):
+        #     closest_cluster = result_df.loc[result_df['유사도 비율 (%)'].idxmax(), '클러스터']
+        #     st.markdown(f"**▶ 유사도가 가장 높은 클러스터: {closest_cluster}번**")
+
+        #     # 클러스터 해당 행 필터링
+        #     cluster_df = df[df['cluster'] == closest_cluster].copy()
+        #     cluster_df['abs_diff'] = (cluster_df['ngt_flow_5'] - input_val).abs()
+
+        #     # 입력값 기준으로 가장 가까운 100개
+        #     closest_100 = cluster_df.nsmallest(100, 'abs_diff')
+
+        #     # 중심벡터 계산
+        #     center_vector = gmm.means_[closest_cluster].reshape(1, -1)
+
+        #     # df_scaled에서 closest_100 인덱스만 추출
+        #     subset_index = closest_100.index.intersection(df_scaled.index)
+        #     scaled_subset = df_scaled.loc[subset_index]
+
+        #     # 중심과 거리 계산
+        #     # 필요한 컬럼 순서를 확실히 맞춰서 추출
+        #     # #######################################
+        #     # cols = df_scaled.columns
+        #     # center_vector = pd.Series(gmm.means_[closest_cluster], index=cols).values.reshape(1, -1)
+        #     feature_cols = df_scaled.columns
+        #     center_vector = pd.Series(gmm.means_[closest_cluster], index=feature_cols).values.reshape(1, -1)
+        #     # #######################################
+        #     distances_to_center = pairwise_distances(scaled_subset, center_vector).flatten()
+
+        #     ####################################### gmm 클러스터링을 통해 해당 클러스터에 속할 확률 반환 부분
+        #     # scaled_subset 샘플들이 각 클러스터에 속할 확률 반환 (소프트 클러스터링)
+        #     # proba_matrix = gmm.predict_proba(scaled_subset)   # shape = (n_samples, n_clusters)
+        #     # 특정 클러스터(closest_cluster)에 속할 확률만 추출
+        #     # distances_to_center = proba_matrix[:, closest_cluster]
+        #     ###############################
+
+
+        #     closest_100['dist_to_center'] = distances_to_center
+
+        #     # 중심에 가까운 순서로 상위 10개 추출
+        #     closest_10 = closest_100.sort_values('dist_to_center').iloc[:10]
+
+        #     st.subheader("유사 클러스터의 대표 시점 상위 10개")
+        #     st.dataframe(closest_10.drop(columns='abs_diff').round(2))
 
             # #######################################
             # 버튼 가로 나열
